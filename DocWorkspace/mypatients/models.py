@@ -68,8 +68,6 @@ class ClinicalRecord(models.Model):
     def get_absolute_url(self):
         return reverse("ClinicalRecord_detail", kwargs={"pk": self.pk})
 
-    
-
 class Temperature(models.Model):
 
     date_time = models.DateTimeField("Время замера", auto_now_add=True)
