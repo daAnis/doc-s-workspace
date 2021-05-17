@@ -2,10 +2,10 @@ from django.db import models
 from django.urls import reverse
 
 def record_file_name(instance, filename):
-    return '/'.join(['records', instance.date_time.year, instance.date_time.month, instance.patient.name, filename])
+    return '/'.join(['records', str(instance.date_time.year), str(instance.date_time.month), str(instance.patient.name), filename])
 
 def examination_file_name(instance, filename):
-    return '/'.join(['records', instance.record.date_time.year, instance.record.date_time.month, instance.record.patient.name, filename])
+    return '/'.join(['records', str(instance.record.date_time.year), str(instance.record.date_time.month), str(instance.record.patient.name), filename])
 
 class Doctor(models.Model):
 

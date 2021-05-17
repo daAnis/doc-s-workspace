@@ -14,15 +14,15 @@
         <div class="album py-5 bg-light">
             <div class="container">
                 <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                {% for p in patients %}
+                {% for r in records %}
                     <div class="col">
                         <div class="card shadow-sm">
                             <div class="card-body">
-                                <h4 class="card-title">{{ p.patient.name }}</h4>
-                                <h6 class="card-subtitle mb-2 text-muted">Полных лет: {{ p.patient.birth_date|timeuntil }}</h6>
-                                <h6 class="card-subtitle mb-2 text-muted">Дата поступления: {{p.date_time|date:'d.m.Y'}}</h6>
-                                <p class="card-text">{{ p.diagnosis }}</p>
-                                <a class="stretched-link" href="{% url 'patient' record_id=p.pk %}"></a>
+                                <h4 class="card-title">{{ r.patient.name }}</h4>
+                                <h6 class="card-subtitle mb-2 text-muted">Полных лет: {{ r.patient.birth_date|timeuntil }}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">Дата поступления: {{ r.date_time|date:'d.m.Y' }}</h6>
+                                <p class="card-text">{{ r.diagnosis }}</p>
+                                <a class="stretched-link" href="{% url 'record' ward r.pk %}"></a>
                             </div>
                         </div>
                     </div>
