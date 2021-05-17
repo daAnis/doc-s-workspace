@@ -1,10 +1,12 @@
-{% extends "_layout.html" %}
+{% extends 'mypatients/_layout.html' %}
+{% load static %}
 
 {% block title %}Лист наблюдений{% endblock %}
+
 {% block breadcrumbs %}
-<li class="breadcrumb-item"><a href="wards.html">Палаты</a></li>
-<li class="breadcrumb-item"><a href="patients.html">{{ record.ward }}</a></li>
-<li class="breadcrumb-item"><a href="patient.html">{{ record.patient }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'wards' %}">Палаты</a></li>
+<li class="breadcrumb-item"><a href="{% url 'records_in_ward' record.ward %}">Палата {{ record.ward }}</a></li>
+<li class="breadcrumb-item"><a href="{% url 'record' record.ward record.pk %}">{{ record.patient.name }}</a></li>
 <li class="breadcrumb-item active" aria-current="page">Лист наблюдений</li>
 {% endblock %}
 

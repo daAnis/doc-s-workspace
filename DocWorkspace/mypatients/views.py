@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-from .models import ClinicalRecord
+from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription
 
 # Create your views here.
 def index(request):
@@ -21,3 +21,19 @@ def records_in_ward(request, ward):
 def record(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     return render(request, 'mypatients/patient.html', {'record': patient})
+
+def examination(request, ward, record_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    exam_list = Examination.objects.filter(record=record_id)
+    return render(request, 'mypatients/examination.html', {'record': patient, 'examinations': exam_list})
+
+def observation(request, ward, record_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    temp_list = Temperature.objects.filter(record=record_id)
+    pres_list = Pressure.objects.filter(record=record_id)
+    return render(request, 'mypatients/observation.html', {'record': patient, 'temp': temp_list, 'pressure': pres_list})
+
+def prescription(request, ward, record_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    presc_list = Prescription.objects.filter(record=record_id)
+    return render(request, 'mypatients/prescription.html', {'record': patient, 'presc': presc_list})
