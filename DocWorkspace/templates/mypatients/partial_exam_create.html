@@ -1,0 +1,20 @@
+{% load widget_tweaks %}
+
+<form method="POST" action="" class="js-examination-create-form">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title" id="examModalLabel">Добавить обследование</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    {% for field in form %}
+    <div class="modal-body">
+        <div class="input-group mb-3">
+            {% render_field field class="form-control" placeholder="Название" aria-label="Обследование"%}
+        </div>
+    </div>
+    {% endfor %}
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Добавить</button>
+    </div>
+</form>
