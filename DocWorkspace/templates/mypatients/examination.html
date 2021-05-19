@@ -43,7 +43,7 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Препарат</th>
+                            <th scope="col">Обследование</th>
                             <th scope="col">Дата назначения</th>
                             <th scope="col">Дата исполнения</th>
                             <th scope="col">Действия</th>
@@ -111,8 +111,6 @@
         //Deleting examination
         $("#exam-table").on("click", ".js-delete-exam", loadForm);
         $("#examModal").on("submit", ".js-examination-delete-form", saveForm);
-    });
-
-    
+    });    
 </script>
 {% endblock %}

@@ -1,0 +1,13 @@
+{% load widget_tweaks %}
+{% now "Y-m-d" as today %}
+
+<div class="modal-body">
+    <div class="input-group mb-3">
+        {% render_field form.name class="form-control" placeholder="Название" aria-label="Препарат" %}
+    </div>
+    <div class="input-group mb-3">
+        {% render_field form.date_1 class="form-control" type="date" min=today placeholder="Дата начала" aria-label="Дата начала приема" %}
+        <span class="input-group-text">-</span>
+        {% render_field form.date_2 class="form-control" type="date" min=today placeholder="Дата окончания" aria-label="Дата окончания приема" %}
+    </div>
+</div>

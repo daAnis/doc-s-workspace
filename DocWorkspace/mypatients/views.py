@@ -2,8 +2,10 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
+from datetime import date
+
 from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription
-from .forms import ExaminationForm
+from .forms import ExaminationForm, PrescriptionForm
 
 def index(request):
     return render(request, "mypatients/index.html", {})
@@ -133,5 +135,84 @@ def prescription(request, ward, record_id):
     return render(
         request,
         "mypatients/prescription.html",
-        {"record": patient, "presc": presc_list},
+        {"record": patient, "prescriptions": presc_list},
     )
+
+def save_prescription_form(request, form, record_id, template_name):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    data = dict()
+    if request.method == "POST":
+        if form.is_valid():
+            recived_form = form.save(commit=False)
+            recived_form.record = patient
+            recived_form.save()
+            data["form_is_valid"] = True
+            prescriptions = Prescription.objects.filter(record=record_id)
+            data["html_pr_list"] = render_to_string(
+                "mypatients/prescription_partials/partial_pr_list.html",
+                {
+                    "prescriptions": prescriptions,
+                    "record": patient,
+                },
+            )
+        else:
+            data["form_is_valid"] = False
+    context = {"form": form, "record": patient}
+    data["html_form"] = render_to_string(template_name, context, request=request)
+    return JsonResponse(data)
+
+
+def prescription_create(request, ward, record_id):
+    if request.method == "POST":
+        form = PrescriptionForm(request.POST)
+    else:
+        form = PrescriptionForm()
+    return save_prescription_form(
+        request,
+        form,
+        record_id,
+        "mypatients/prescription_partials/partial_pr_create.html",
+    )
+
+
+def prescription_update(request, ward, record_id, pr_id):
+    pr = Prescription.objects.get(pk=pr_id)
+    if request.method == "POST":
+        form = PrescriptionForm(request.POST, instance=pr)
+    else:
+        form = PrescriptionForm(instance=pr)
+    return save_prescription_form(
+        request,
+        form,
+        record_id,
+        "mypatients/prescription_partials/partial_pr_update.html",
+    )
+
+
+def prescription_delete(request, ward, record_id, pr_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    pr = Prescription.objects.get(pk=pr_id)
+    data = dict()
+    if request.method == "POST":
+        if pr.date_1 <= date.today():
+            pr.date_2 = date.today()
+            pr.save()
+        else:
+            pr.delete()
+        data["form_is_valid"] = True
+        prescriptions = Prescription.objects.filter(record=record_id)
+        data["html_pr_list"] = render_to_string(
+            "mypatients/prescription_partials/partial_pr_list.html",
+            {
+                "prescriptions": prescriptions,
+                "record": patient,
+            },
+        )
+    else:
+        context = {"record": patient, "prescription": pr, }
+        data["html_form"] = render_to_string(
+            "mypatients/prescription_partials/partial_pr_delete.html",
+            context,
+            request=request,
+        )
+    return JsonResponse(data)

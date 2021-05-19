@@ -90,7 +90,7 @@
                 {% for n in notifications %}
                     <a href="{{ n.url }}" class="list-group-item list-group-item-action border-0">
                         <div class="d-flex w-100 justify-content-between">
-                            <small>{{ n.date_time|timesince }}</small>
+                            <small>{{ n.date_time|timeuntil }}</small>
                         </div>
                         <p class="mb-1">{{ n.value }}<small
                                 class="link-primary">&nbsp;&nbsp;&nbsp;Перейти...</small></p>

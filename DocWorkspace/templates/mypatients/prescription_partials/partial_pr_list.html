@@ -1,17 +1,15 @@
-{% for ex in examinations %}
+{% now "Y-m-d" as today %}
+
+{% for pr in prescriptions %}
 <tr>
     <th scope="row">{{ forloop.counter }}</th>
-    <td>{{ ex.name }}</td>
-    <td>{{ ex.date_1 }}</td>
-
-    {% if ex.result %}
-        <td>{{ ex.date_2 }}</td>
-        <td><a href="{{ ex.result.url }}" target="_blank">Результат</a></td>
-    {% else %}
-        <td></td>
-        <td>
+    <td>{{ pr.name }}</td>
+    <td>{{ pr.date_1 }}</td>
+    <td>{{ pr.date_2 }}</td>
+    {% if today < pr.date_2|date:"Y-m-d" %}
+    <td>
         <!--Edit-->
-        <a role="button" class="js-update-exam" data-url="{% url 'examination_update' record.ward record.pk ex.pk %}" style="text-decoration: none;">
+        <a role="button" class="js-update-pr" data-url="{% url 'prescription_update' record.ward record.pk pr.pk %}" style="text-decoration: none;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil"
                 viewBox="0 0 16 16">
                 <path
@@ -20,7 +18,7 @@
         </a>
         &nbsp;&nbsp;&nbsp;&nbsp;
         <!--Delete-->
-        <a role="button" class="js-delete-exam" data-url="{% url 'examination_delete' record.ward record.pk ex.pk %}" style="text-decoration: none;">
+        <a role="button" class="js-delete-pr" data-url="{% url 'prescription_delete' record.ward record.pk pr.pk %}" style="text-decoration: none;">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-circle"
                 viewBox="0 0 16 16">
                 <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -29,6 +27,8 @@
             </svg>
         </a>
     </td>
+    {% else %}
+    <td></td>
     {% endif %}
 </tr>
 {% endfor %}

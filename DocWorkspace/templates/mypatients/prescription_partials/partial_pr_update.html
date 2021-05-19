@@ -1,0 +1,14 @@
+{% load widget_tweaks %}
+
+<form method="POST" action="{% url 'prescription_update' record.ward record.pk form.instance.pk %}" class="js-prescription-update-form">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title" id="prModalLabel">Изменить назначение</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    {% include 'mypatients/prescription_partials/partial_pr_form.html' %}
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    </div>
+</form>
