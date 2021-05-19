@@ -28,7 +28,7 @@
             <div class="col-1">
                 <!--Plus-->
                 <a class="js-create-exam" data-bs-toggle="modal" href="#examModal" role="button"
-                    aria-controls="examModal">
+                    aria-controls="examModal" data-url="{% url 'examination_create' record.ward record.pk %}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                         class="bi bi-plus-circle" viewBox="0 0 16 16">
                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -46,12 +46,11 @@
                             <th scope="col">Препарат</th>
                             <th scope="col">Дата назначения</th>
                             <th scope="col">Дата исполнения</th>
-                            <th scope="col">Результат</th>
                             <th scope="col">Действия</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% include 'mypatients/partial_exam_list.html' %}
+                        {% include 'mypatients/examination_partials/partial_exam_list.html' %}
                     </tbody>
                 </table>
             </div>
@@ -65,11 +64,11 @@
     integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-    //Adding examination
     $(function () {
-        $(".js-create-exam").click(function () {
+        var loadForm = function () {
+            var btn = $(this);
             $.ajax({
-                url: '{% url 'examination_create' record.ward record.pk %}',
+                url: btn.attr("data-url"),
                 type: 'get',
                 dataType: 'json',
                 beforeSend: function () {
@@ -79,27 +78,41 @@
                     $("#examModal .modal-dialog .modal-content").html(data.html_form);
                 }
             });
-        });
+        };
+
+        var saveForm = function () {
+            var form = $(this);
+            $.ajax({
+                url: form.attr("action"),
+                data: form.serialize(),
+                type: form.attr("method"),
+                dataType: 'json',
+                success: function (data) {
+                    if (data.form_is_valid) {
+                        $("#exam-table tbody").html(data.html_exam_list);
+                        $("#examModal").modal("hide");
+                    }
+                    else {
+                        $("#examModal .modal-dialog .modal-content").html(data.html_form);
+                    }
+                }
+            });
+            return false;
+        };
+
+        // Adding examination
+        $(".js-create-exam").click(loadForm);
+        $("#examModal").on("submit", ".js-examination-create-form", saveForm);
+        
+        //Updating examination
+        $("#exam-table").on("click", ".js-update-exam", loadForm);
+        $("#examModal").on("submit", ".js-examination-update-form", saveForm);
+
+        //Deleting examination
+        $("#exam-table").on("click", ".js-delete-exam", loadForm);
+        $("#examModal").on("submit", ".js-examination-delete-form", saveForm);
     });
 
-    $("#examModal").on("submit", ".js-examination-create-form", function () {
-        var form = $(this);
-        $.ajax({
-            url: '{% url 'examination_create' record.ward record.pk %}',
-            data: form.serialize(),
-            type: 'post',
-            dataType: 'json',
-            success: function (data) {
-                if (data.form_is_valid) {
-                    $("#exam-table tbody").html(data.html_exam_list);
-                    $("#examModal").modal("hide");
-                }
-                else {
-                    $("#examModal .modal-dialog .modal-content").html(data.html_form);
-                }
-            }
-        });
-        return false;
-    });
+    
 </script>
 {% endblock %}

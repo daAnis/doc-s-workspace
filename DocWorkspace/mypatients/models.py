@@ -92,8 +92,8 @@ class Pressure(models.Model):
 class Examination(models.Model):
 
     name = models.CharField("Вид обследования", max_length=50)
-    date_1 = models.DateField("Дата назначения", auto_now_add=True)
-    date_2 = models.DateField("Дата исполнения", auto_now=True, blank=True)
+    date_1 = models.DateTimeField("Дата назначения", auto_now_add=True)
+    date_2 = models.DateTimeField("Дата исполнения", auto_now=True, blank=True)
     record = models.ForeignKey(ClinicalRecord, verbose_name="История болезни", on_delete=models.CASCADE)
     result = models.FileField("Результат", upload_to=examination_file_name, blank=True)
 

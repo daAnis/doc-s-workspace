@@ -1,0 +1,16 @@
+<form method="POST" action="{% url 'examination_delete' record.ward record.pk examination.pk %}" class="js-examination-delete-form">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title" id="examModalLabel">Удалить обследование</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="input-group mb-3">
+            <p class="lead">Вы уверены, что хотите удалить <strong>{{ examination.name }}</strong>?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="submit" class="btn btn-primary">Удалить</button>
+    </div>
+</form>

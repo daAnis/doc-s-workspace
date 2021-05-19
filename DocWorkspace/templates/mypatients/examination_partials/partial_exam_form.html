@@ -1,0 +1,9 @@
+{% load widget_tweaks %}
+
+{% for field in form %}
+<div class="modal-body">
+    <div class="input-group mb-3">
+        {% render_field field class="form-control" placeholder="Название" aria-label="Обследование" %}
+    </div>
+</div>
+{% endfor %}

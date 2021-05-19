@@ -19,7 +19,7 @@
                         <div class="card shadow-sm">
                             <div class="card-body">
                                 <h4 class="card-title">{{ r.patient.name }}</h4>
-                                <h6 class="card-subtitle mb-2 text-muted">Полных лет: {{ r.patient.birth_date|timeuntil }}</h6>
+                                <h6 class="card-subtitle mb-2 text-muted">Полных лет: {{ r.patient.birth_date|timesince }}</h6>
                                 <h6 class="card-subtitle mb-2 text-muted">Дата поступления: {{ r.date_time|date:'d.m.Y' }}</h6>
                                 <p class="card-text">{{ r.diagnosis }}</p>
                                 <a class="stretched-link" href="{% url 'record' ward r.pk %}"></a>

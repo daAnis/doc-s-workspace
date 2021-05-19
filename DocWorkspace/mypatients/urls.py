@@ -5,6 +5,8 @@ from . import views
 urlpatterns = [
     path('wards/<int:ward>/<int:record_id>/prescription/', views.prescription, name='prescription'),
     path('wards/<int:ward>/<int:record_id>/observation/', views.observation, name='observation'),
+    path('wards/<int:ward>/<int:record_id>/examination/delete/<int:exam_id>/', views.examination_delete, name='examination_delete'),
+    path('wards/<int:ward>/<int:record_id>/examination/update/<int:exam_id>/', views.examination_update, name='examination_update'),
     path('wards/<int:ward>/<int:record_id>/examination/create/', views.examination_create, name='examination_create'),
     path('wards/<int:ward>/<int:record_id>/examination/', views.examination, name='examination'),
     path('wards/<int:ward>/<int:record_id>/', views.record, name='record'),
