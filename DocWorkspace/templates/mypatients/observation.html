@@ -17,20 +17,7 @@
     <div class="modal fade" id="tempModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="tempModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="tempModalLabel">Температура</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <input type="text" class="form-control" id="tempInput" placeholder="36.6">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="button" class="btn btn-primary" onclick="addTemp()"
-                        data-bs-dismiss="modal">Добавить</button>
-                </div>
-            </div>
+            <div class="modal-content"></div>
         </div>
     </div>
     <!--End of modal-->
@@ -49,7 +36,8 @@
         <div class="row">
             <div class="col-1">
                 <!--Plus temperature-->
-                <a data-bs-toggle="modal" href="#tempModal" role="button" aria-controls="tempModal">
+                <a class="js-create-temp" data-bs-toggle="modal" href="#tempModal" role="button"
+                    aria-controls="tempModal" data-url="{% url 'temp_create' record.ward record.pk %}">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                         class="bi bi-plus-circle" viewBox="0 0 16 16">
                         <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
@@ -60,7 +48,8 @@
             </div>
             <div class="col-11">
                 <!--Temperature chart-->
-                <canvas class="my-4 w-100" id="myChart" height="380"></canvas>
+                <canvas class="my-4 w-100" id="myChart" height="380"
+                    data-url="{% url 'temp_get' record.ward record.pk %}"></canvas>
             </div>
         </div>
     </div>
@@ -120,58 +109,93 @@
     crossorigin="anonymous"></script>
 
 <script>
-    console.log(moment());
-    console.log(moment().add(14, 'days'));
-    var ctx = document.getElementById('myChart');
-    var myChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            datasets: [{
-                data: [],
-                lineTension: 0.1,
-                borderColor: '#007bff',
-                borderWidth: 4,
-                pointBackgroundColor: '#007bff'
-            }]
-        },
-        options: {
-            legend: false,
-            scales: {
-                xAxes: [{
-                    type: 'time',
-                    ticks: {
-                        suggestedMin: moment(),
-                        suggestedMax: moment().add(14, 'days'),
-                        source: 'data'
-                    }
-                }],
-                yAxes: [{
-                    ticks: {
-                        suggestedMin: 35.0,
-                        suggestedMax: 42.0
-                    }
-                }]
-            }
-
-        }
-    });
-
-    //Adding temperature
-    function addTemp() {
-        var input = document.getElementById('tempInput');
-        var res = parseFloat(input.value);
-        input.value = "";
-        if (isNaN(res)) return;
-        myChart.data.datasets[0].data.push({
-            x: moment(),
-            y: res
-        });
-        myChart.update();
-    };
-
-    //Adding blood pressure
     $(function () {
-        var loadForm = function () {
+        //Temperature
+        var getChart = function () {
+            var $tempChart = $("#myChart");
+            $.ajax({
+                url: $tempChart.data("url"),
+                success: function (data) {
+                    var ctx = $tempChart[0].getContext("2d");
+                    new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                data: data.data,
+                                lineTension: 0.1,
+                                borderColor: '#007bff',
+                                borderWidth: 4,
+                                pointBackgroundColor: '#007bff'
+                            }]
+                        },
+                        options: {
+                            legend: false,
+                            scales: {
+                                xAxes: [{
+                                    type: 'time',
+                                    ticks: {
+                                        suggestedMin: moment(),
+                                        suggestedMax: moment().add(14, 'days'),
+                                        source: 'data'
+                                    }
+                                }],
+                                yAxes: [{
+                                    ticks: {
+                                        suggestedMin: 35.0,
+                                        suggestedMax: 42.0
+                                    }
+                                }]
+                            }
+                        }
+                    });
+                }
+            });
+        };
+
+        $(getChart);
+
+        var loadFormForTemp = function () {
+            var btn = $(this);
+            $.ajax({
+                url: btn.attr("data-url"),
+                type: 'get',
+                dataType: 'json',
+                beforeSend: function () {
+                    $("#tempModal").modal("show");
+                },
+                success: function (data) {
+                    $("#tempModal .modal-dialog .modal-content").html(data.html_form);
+                }
+            });
+        };
+
+        var saveFormForTemp = function () {
+            var form = $(this);
+            $.ajax({
+                url: form.attr("action"),
+                data: form.serialize(),
+                type: form.attr("method"),
+                dataType: 'json',
+                success: function (data) {
+                    if (data.form_is_valid) {
+                        $(getChart);
+                        $("#tempModal").modal("hide");
+                    }
+                    else {
+                        $("#tempModal .modal-dialog .modal-content").html(data.html_form);
+                    }
+                }
+            });
+            return false;
+        };
+
+        // Adding temperature
+        $(".js-create-temp").click(loadFormForTemp);
+        $("#tempModal").on("submit", ".js-temp-create-form", saveFormForTemp);
+
+        //Blood pressure
+        var loadFormForBPP = function () {
             var btn = $(this);
             $.ajax({
                 url: btn.attr("data-url"),
@@ -186,7 +210,7 @@
             });
         };
 
-        var saveForm = function () {
+        var saveFormForBPP = function () {
             var form = $(this);
             $.ajax({
                 url: form.attr("action"),
@@ -207,16 +231,16 @@
         };
 
         // Adding blood pressure and puls
-        $(".js-create-bpp").click(loadForm);
-        $("#presModal").on("submit", ".js-bpp-create-form", saveForm);
+        $(".js-create-bpp").click(loadFormForBPP);
+        $("#presModal").on("submit", ".js-bpp-create-form", saveFormForBPP);
 
         //Updating blood pressure and puls
-        $("#bpp-table").on("click", ".js-update-bpp", loadForm);
-        $("#presModal").on("submit", ".js-bpp-update-form", saveForm);
+        $("#bpp-table").on("click", ".js-update-bpp", loadFormForBPP);
+        $("#presModal").on("submit", ".js-bpp-update-form", saveFormForBPP);
 
         //Deleting blood pressure and puls
-        $("#bpp-table").on("click", ".js-delete-bpp", loadForm);
-        $("#presModal").on("submit", ".js-bpp-delete-form", saveForm);
+        $("#bpp-table").on("click", ".js-delete-bpp", loadFormForBPP);
+        $("#presModal").on("submit", ".js-bpp-delete-form", saveFormForBPP);
     });
 </script>
 {% endblock %}

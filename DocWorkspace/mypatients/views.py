@@ -5,7 +5,8 @@ from django.template.loader import render_to_string
 from datetime import date
 
 from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription
-from .forms import ExaminationForm, PrescriptionForm, PressureForm
+from .forms import ExaminationForm, PrescriptionForm, PressureForm, TemperatureForm
+
 
 def index(request):
     return render(request, "mypatients/index.html", {})
@@ -109,7 +110,10 @@ def examination_delete(request, ward, record_id, exam_id):
             },
         )
     else:
-        context = {"record": patient, "examination": exam, }
+        context = {
+            "record": patient,
+            "examination": exam,
+        }
         data["html_form"] = render_to_string(
             "mypatients/examination_partials/partial_exam_delete.html",
             context,
@@ -120,13 +124,14 @@ def examination_delete(request, ward, record_id, exam_id):
 
 def observation(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
-    temp_list = Temperature.objects.filter(record=record_id)
-    pres_list = Pressure.objects.filter(record=record_id)
+    temps = Temperature.objects.filter(record=record_id)
+    bpps = Pressure.objects.filter(record=record_id)
     return render(
         request,
         "mypatients/observation.html",
-        {"record": patient, "temp": temp_list, "pressure": pres_list},
+        {"record": patient, "temps": temps, "bpps": bpps},
     )
+
 
 def save_bpp_form(request, form, record_id, template_name):
     patient = ClinicalRecord.objects.get(pk=record_id)
@@ -195,13 +200,62 @@ def bpp_delete(request, ward, record_id, bpp_id):
             },
         )
     else:
-        context = {"record": patient, "bpp": bpp, }
+        context = {
+            "record": patient,
+            "bpp": bpp,
+        }
         data["html_form"] = render_to_string(
             "mypatients/observation_partials/partial_bpp_delete.html",
             context,
             request=request,
         )
     return JsonResponse(data)
+
+
+def temp_get(request, ward, record_id):
+    labels = []
+    data = []
+    temps = Temperature.objects.filter(record=record_id)
+    for t in temps:
+        labels.append(t.date_time)
+        data.append(t.value)
+    return JsonResponse(
+        data={
+            "labels": labels,
+            "data": data,
+        }
+    )
+
+
+def save_temp_form(request, form, record_id, template_name):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    data = dict()
+    if request.method == "POST":
+        if form.is_valid():
+            recived_form = form.save(commit=False)
+            recived_form.record = patient
+            recived_form.save()
+            data["form_is_valid"] = True
+            temps = Temperature.objects.filter(record=record_id)
+        else:
+            data["form_is_valid"] = False
+    context = {"form": form, "record": patient}
+    data["html_form"] = render_to_string(template_name, context, request=request)
+    return JsonResponse(data)
+
+
+def temp_create(request, ward, record_id):
+    if request.method == "POST":
+        form = TemperatureForm(request.POST)
+    else:
+        form = TemperatureForm()
+    return save_temp_form(
+        request,
+        form,
+        record_id,
+        "mypatients/observation_partials/partial_temp_create.html",
+    )
+
 
 def prescription(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
@@ -211,6 +265,7 @@ def prescription(request, ward, record_id):
         "mypatients/prescription.html",
         {"record": patient, "prescriptions": presc_list},
     )
+
 
 def save_prescription_form(request, form, record_id, template_name):
     patient = ClinicalRecord.objects.get(pk=record_id)
@@ -283,7 +338,10 @@ def prescription_delete(request, ward, record_id, pr_id):
             },
         )
     else:
-        context = {"record": patient, "prescription": pr, }
+        context = {
+            "record": patient,
+            "prescription": pr,
+        }
         data["html_form"] = render_to_string(
             "mypatients/prescription_partials/partial_pr_delete.html",
             context,

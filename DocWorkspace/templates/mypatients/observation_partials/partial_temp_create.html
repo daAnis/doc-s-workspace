@@ -1,0 +1,12 @@
+<form method="POST" action="{% url 'temp_create' record.ward record.pk %}" class="js-temp-create-form">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title" id="tempModalLabel">Температура</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    {% include 'mypatients/observation_partials/partial_temp_form.html' %}
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button type="submit" class="btn btn-primary">Добавить</button>
+    </div>
+</form>
