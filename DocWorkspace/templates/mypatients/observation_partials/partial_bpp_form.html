@@ -1,0 +1,12 @@
+{% load widget_tweaks %}
+
+<div class="modal-body">
+    <div class="input-group mb-3">
+        {% render_field form.diastole type="text" class="form-control" placeholder="120" aria-label="Диастола" %}
+        <span class="input-group-text">/</span>
+        {% render_field form.systole type="text" class="form-control" placeholder="80" aria-label="Систола" %}
+    </div>
+    <div class="input-group mb-3">
+        {% render_field form.puls type="text" class="form-control" placeholder="90" aria-label="Пульс" %}
+    </div>
+</div>

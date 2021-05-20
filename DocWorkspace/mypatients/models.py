@@ -81,8 +81,9 @@ class Temperature(models.Model):
 class Pressure(models.Model):
 
     date_time = models.DateTimeField("Время замера", auto_now_add=True)
+    diastole = models.PositiveSmallIntegerField("Дистола")
+    systole = models.PositiveSmallIntegerField("Систола")
     puls = models.PositiveSmallIntegerField("Пульс")
-    pressure = models.CharField("Двление", max_length=7)
     record = models.ForeignKey(ClinicalRecord, verbose_name="История болезни", on_delete=models.CASCADE)
 
     class Meta:

@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from datetime import date
 
 from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription
-from .forms import ExaminationForm, PrescriptionForm
+from .forms import ExaminationForm, PrescriptionForm, PressureForm
 
 def index(request):
     return render(request, "mypatients/index.html", {})
@@ -128,6 +128,80 @@ def observation(request, ward, record_id):
         {"record": patient, "temp": temp_list, "pressure": pres_list},
     )
 
+def save_bpp_form(request, form, record_id, template_name):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    data = dict()
+    if request.method == "POST":
+        if form.is_valid():
+            recived_form = form.save(commit=False)
+            recived_form.record = patient
+            recived_form.save()
+            data["form_is_valid"] = True
+            bpps = Pressure.objects.filter(record=record_id)
+            data["html_bpp_list"] = render_to_string(
+                "mypatients/observation_partials/partial_bpp_list.html",
+                {
+                    "bpps": bpps,
+                    "record": patient,
+                },
+            )
+        else:
+            data["form_is_valid"] = False
+    context = {"form": form, "record": patient}
+    data["html_form"] = render_to_string(template_name, context, request=request)
+    return JsonResponse(data)
+
+
+def bpp_create(request, ward, record_id):
+    if request.method == "POST":
+        form = PressureForm(request.POST)
+    else:
+        form = PressureForm()
+    return save_bpp_form(
+        request,
+        form,
+        record_id,
+        "mypatients/observation_partials/partial_bpp_create.html",
+    )
+
+
+def bpp_update(request, ward, record_id, bpp_id):
+    bpp = Pressure.objects.get(pk=bpp_id)
+    if request.method == "POST":
+        form = PressureForm(request.POST, instance=bpp)
+    else:
+        form = PressureForm(instance=bpp)
+    return save_bpp_form(
+        request,
+        form,
+        record_id,
+        "mypatients/observation_partials/partial_bpp_update.html",
+    )
+
+
+def bpp_delete(request, ward, record_id, bpp_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    bpp = Pressure.objects.get(pk=bpp_id)
+    data = dict()
+    if request.method == "POST":
+        bpp.delete()
+        data["form_is_valid"] = True
+        bpps = Pressure.objects.filter(record=record_id)
+        data["html_bpp_list"] = render_to_string(
+            "mypatients/observation_partials/partial_bpp_list.html",
+            {
+                "bpps": bpps,
+                "record": patient,
+            },
+        )
+    else:
+        context = {"record": patient, "bpp": bpp, }
+        data["html_form"] = render_to_string(
+            "mypatients/observation_partials/partial_bpp_delete.html",
+            context,
+            request=request,
+        )
+    return JsonResponse(data)
 
 def prescription(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)

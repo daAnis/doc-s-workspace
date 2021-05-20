@@ -1,0 +1,16 @@
+<form method="POST" action="{% url 'bpp_delete' record.ward record.pk bpp.pk %}" class="js-bpp-delete-form">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title" id="presModalLabel">Удалить значение</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <div class="modal-body">
+        <div class="input-group mb-3">
+            <p class="lead">Вы уверены, что хотите удалить значение от <strong>{{ bpp.date_time }}</strong>?</p>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
+        <button type="submit" class="btn btn-primary">Отменить</button>
+    </div>
+</form>
