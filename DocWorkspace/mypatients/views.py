@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.template.loader import render_to_string
 
-from datetime import date
+from datetime import date, datetime, timezone
 
 from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription
 from .forms import ExaminationForm, PrescriptionForm, PressureForm, TemperatureForm
@@ -255,6 +255,71 @@ def temp_create(request, ward, record_id):
         record_id,
         "mypatients/observation_partials/partial_temp_create.html",
     )
+
+
+def temp_update(request, ward, record_id, temp_label):
+    date = datetime.strptime(temp_label, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+        tzinfo=timezone.utc
+    )
+    temps = Temperature.objects.filter(record=record_id)
+    temp = Temperature.objects.first()
+    for t in temps:
+        if (
+            date.year == t.date_time.year
+            and date.month == t.date_time.month
+            and date.day == t.date_time.day
+            and date.hour == t.date_time.hour
+            and date.minute == t.date_time.minute
+            and date.second == t.date_time.second
+        ):
+            temp = t
+            break
+    if request.method == "POST":
+        form = TemperatureForm(request.POST, instance=temp)
+    else:
+        form = TemperatureForm(instance=temp)
+    return save_temp_form(
+        request,
+        form,
+        record_id,
+        "mypatients/observation_partials/partial_temp_update.html",
+    )
+
+
+def temp_delete(request, ward, record_id, temp_label):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    date = datetime.strptime(temp_label, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
+        tzinfo=timezone.utc
+    )
+    temps = Temperature.objects.filter(record=record_id)
+    temp = Temperature.objects.first()
+    for t in temps:
+        if (
+            date.year == t.date_time.year
+            and date.month == t.date_time.month
+            and date.day == t.date_time.day
+            and date.hour == t.date_time.hour
+            and date.minute == t.date_time.minute
+            and date.second == t.date_time.second
+        ):
+            temp = t
+            break
+    data = dict()
+    if request.method == "POST":
+        temp.delete()
+        data["form_is_valid"] = True
+        temps = Temperature.objects.filter(record=record_id)
+    else:
+        context = {
+            "record": patient,
+            "temp": temp,
+        }
+        data["html_form"] = render_to_string(
+            "mypatients/observation_partials/partial_temp_update.html",
+            context,
+            request=request,
+        )
+    return JsonResponse(data)
 
 
 def prescription(request, ward, record_id):

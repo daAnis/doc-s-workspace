@@ -78,6 +78,9 @@ class Temperature(models.Model):
         verbose_name = "Температура"
         verbose_name_plural = "Температуры"
 
+    def __str__(self):
+        return self.date_time.strftime('%Y-%m-%d')
+
 class Pressure(models.Model):
 
     date_time = models.DateTimeField("Время замера", auto_now_add=True)

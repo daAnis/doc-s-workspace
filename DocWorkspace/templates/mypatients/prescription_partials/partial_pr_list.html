@@ -1,11 +1,12 @@
+{% load l10n %}
 {% now "Y-m-d" as today %}
 
 {% for pr in prescriptions %}
 <tr>
     <th scope="row">{{ forloop.counter }}</th>
     <td>{{ pr.name }}</td>
-    <td>{{ pr.date_1 }}</td>
-    <td>{{ pr.date_2 }}</td>
+    <td>{{ pr.date_1|localize }}</td>
+    <td>{{ pr.date_2|localize }}</td>
     {% if today < pr.date_2|date:"Y-m-d" %}
     <td>
         <!--Edit-->

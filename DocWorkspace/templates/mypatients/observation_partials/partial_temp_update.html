@@ -1,0 +1,17 @@
+{% load widget_tweaks %}
+
+<form method="POST" class="js-temp-update-form">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title" id="prModalLabel">Изменить значение температуры</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    {% include 'mypatients/observation_partials/partial_temp_form.html' %}
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+        <button formaction="{% url 'temp_delete' record.ward record.pk form.instance.pk %}" type="submit"
+            class="btn btn-danger" id="js-delete-temp">Удалить</button>
+        <button formaction="{% url 'temp_update' record.ward record.pk form.instance.pk %}" type="submit"
+            class="btn btn-primary" id="js-update-temp">Сохранить</button>
+    </div>
+</form>

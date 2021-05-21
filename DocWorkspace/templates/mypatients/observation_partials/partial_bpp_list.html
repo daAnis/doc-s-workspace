@@ -1,7 +1,8 @@
+{% load l10n %}
 {% for p in bpps %}
 <tr>
     <th scope="row">{{ forloop.counter }}</th>
-    <td>{{ p.date_time }}</td>
+    <td>{{ p.date_time|localize }}</td>
     <td>{{ p.diastole }} / {{ p.systole }}</td>
     <td>{{ p.puls }}</td>
     <td>
