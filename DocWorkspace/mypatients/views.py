@@ -257,10 +257,8 @@ def temp_create(request, ward, record_id):
     )
 
 
-def temp_update(request, ward, record_id, temp_label):
-    date = datetime.strptime(temp_label, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-        tzinfo=timezone.utc
-    )
+def temp_update_get(request, ward, record_id, temp_label):
+    date = datetime.strptime(temp_label, "%Y-%m-%dT%H:%M:%S.%fZ")
     temps = Temperature.objects.filter(record=record_id)
     temp = Temperature.objects.first()
     for t in temps:
@@ -274,48 +272,54 @@ def temp_update(request, ward, record_id, temp_label):
         ):
             temp = t
             break
-    if request.method == "POST":
-        form = TemperatureForm(request.POST, instance=temp)
-    else:
-        form = TemperatureForm(instance=temp)
-    return save_temp_form(
-        request,
-        form,
-        record_id,
-        "mypatients/observation_partials/partial_temp_update.html",
-    )
-
-
-def temp_delete(request, ward, record_id, temp_label):
+    form = TemperatureForm(instance=temp)
     patient = ClinicalRecord.objects.get(pk=record_id)
-    date = datetime.strptime(temp_label, "%Y-%m-%dT%H:%M:%S.%fZ").replace(
-        tzinfo=timezone.utc
+    data = dict()
+    context = {"form": form, "record": patient, "temp": temp}
+    data["html_form"] = render_to_string(
+        "mypatients/observation_partials/partial_temp_update.html",
+        context,
+        request=request,
     )
-    temps = Temperature.objects.filter(record=record_id)
-    temp = Temperature.objects.first()
-    for t in temps:
-        if (
-            date.year == t.date_time.year
-            and date.month == t.date_time.month
-            and date.day == t.date_time.day
-            and date.hour == t.date_time.hour
-            and date.minute == t.date_time.minute
-            and date.second == t.date_time.second
-        ):
-            temp = t
-            break
+    return JsonResponse(data)
+
+
+def temp_update_post(request, ward, record_id, temp_id):
+    temp = Temperature.objects.get(pk=temp_id)
+    form = TemperatureForm(request.POST, instance=temp)
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    data = dict()
+    if form.is_valid():
+        recived_form = form.save(commit=False)
+        recived_form.record = patient
+        recived_form.save()
+        data["form_is_valid"] = True
+        temps = Temperature.objects.filter(record=record_id)
+    else:
+        data["form_is_valid"] = False
+    context = {"form": form, "record": patient, "temp": temp}
+    data["html_form"] = render_to_string(
+        "mypatients/observation_partials/partial_temp_update.html",
+        context,
+        request=request,
+    )
+    return JsonResponse(data)
+
+
+def temp_delete(request, ward, record_id, temp_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    temp = Temperature.objects.get(pk=temp_id)
     data = dict()
     if request.method == "POST":
         temp.delete()
         data["form_is_valid"] = True
-        temps = Temperature.objects.filter(record=record_id)
     else:
         context = {
             "record": patient,
             "temp": temp,
         }
         data["html_form"] = render_to_string(
-            "mypatients/observation_partials/partial_temp_update.html",
+            "mypatients/observation_partials/partial_temp_delete.html",
             context,
             request=request,
         )

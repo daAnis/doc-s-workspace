@@ -154,7 +154,7 @@
                         var firstPoint = myChart.getElementAtEvent(evt)[0];
                         if (firstPoint) {
                             var label = myChart.data.labels[firstPoint._index];
-                            var url_mask = "{% url 'temp_update' record.ward record.pk 'arg' %}".replace('arg', label);
+                            var url_mask = "{% url 'temp_update_get' record.ward record.pk 'arg' %}".replace('arg', label);
                             $.ajax({
                                 url: url_mask,
                                 type: 'get',
@@ -189,6 +189,22 @@
             });
         };
 
+        var loadFormForTempDelete = function () {
+            var btn = $(this);
+            $.ajax({
+                url: btn.attr("data-url"),
+                type: 'get',
+                dataType: 'json',
+                beforeSend: function () {
+                    $("#tempModal").modal("hide");
+                    $("#presModal").modal("show");
+                },
+                success: function (data) {
+                    $("#presModal .modal-dialog .modal-content").html(data.html_form);
+                }
+            });
+        };
+
         var saveFormForTemp = function () {
             var form = $(this);
             $.ajax({
@@ -200,6 +216,7 @@
                     if (data.form_is_valid) {
                         $(getChart);
                         $("#tempModal").modal("hide");
+                        $("#presModal").modal("hide");
                     }
                     else {
                         $("#tempModal .modal-dialog .modal-content").html(data.html_form);
@@ -214,8 +231,10 @@
         $("#tempModal").on("submit", ".js-temp-create-form", saveFormForTemp);
 
         //Updating temperature
-        //Deleting temperature
         $("#tempModal").on("submit", ".js-temp-update-form", saveFormForTemp);
+        //Deleting temperature
+        $("#tempModal").on("click", ".js-delete-temp", loadFormForTempDelete);
+        $("#presModal").on("submit", ".js-temp-delete-form", saveFormForTemp);
 
         //Blood pressure
         var loadFormForBPP = function () {

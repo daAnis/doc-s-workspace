@@ -1,16 +1,19 @@
-<form method="POST" action="{% url 'temp_delete' record.ward record.pk temp.pk %}" class="js-prescription-delete-form">
+{% load l10n %}
+<form method="POST" action="{% url 'temp_delete' record.ward record.pk temp.pk %}"
+    class="js-temp-delete-form">
     {% csrf_token %}
     <div class="modal-header">
-        <h5 class="modal-title" id="prModalLabel">Отменить назначение</h5>
+        <h5 class="modal-title" id="prModalLabel">Удалить значение</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body">
         <div class="input-group mb-3">
-            <p class="lead">Вы уверены, что хотите отменить <strong>{{ prescription.name }}</strong>?</p>
+            <p class="lead">Вы уверены, что хотите удалить значение <strong>{{ temp.value }}</strong> от 
+                <strong>{{temp.date_time|localize }}</strong>?</p>
         </div>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Назад</button>
-        <button type="submit" class="btn btn-primary">Отменить</button>
+        <button type="submit" class="btn btn-primary">Удалить</button>
     </div>
 </form>
