@@ -79,7 +79,7 @@ margin-top: 1rem;
     <!--End of top part-->
 
     <!--Bottom part-->
-    <div class="container" style="margin-top: 1rem;">
+    <div class="container" style="margin-top: 1rem; margin-bottom: 2rem;">
         <!--Links-->
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
@@ -109,7 +109,7 @@ margin-top: 1rem;
                 Паспортные данные
             </div>
             <div class="tab-pane fade" id="nav-admission-data" role="tabpanel" aria-labelledby="nav-admission-data-tab">
-                Данные при поступлении
+                {% include 'mypatients/record_partials/record_form.html' %}
             </div>
             <div class="tab-pane fade" id="nav-head-insp" role="tabpanel" aria-labelledby="nav-head-insp-tab">
                 Осмотр совместно с заведующим

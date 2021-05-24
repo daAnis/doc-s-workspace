@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import Examination, Prescription, Pressure, Temperature
+from .models import Examination, Prescription, Pressure, Temperature, ClinicalRecord
 
 DATE_INPUT_FORMATS = ['%Y-%m-%d',]
 
@@ -25,3 +25,8 @@ class TemperatureForm(forms.ModelForm):
     class Meta:
         model = Temperature
         fields = ('value',)
+
+class RecordForm(forms.ModelForm):
+    class Meta:
+        model = ClinicalRecord
+        fields = ('complaint', 'anamnesis', 'habitual_intoxication', 'occupational_hazards', 'epidanamnesis', 'allergic_history', 'blood_transfusion', 'expert_history', 'past_illnesses',)

@@ -1,6 +1,9 @@
 from django.db import models
 from django.urls import reverse
 
+from phonenumber_field.modelfields import PhoneNumberField
+from ckeditor.fields import RichTextField
+
 def record_file_name(instance, filename):
     return '/'.join(['records', str(instance.date_time.year), str(instance.date_time.month), str(instance.patient.name), filename])
 
@@ -41,6 +44,7 @@ class Patient(models.Model):
 
     name = models.CharField("ФИО", max_length=50)
     birth_date = models.DateField("Дата рождения")
+    phone_number = PhoneNumberField("Номер телефона", blank=True, null=True)
 
     class Meta:
         verbose_name = "Пациент"
@@ -56,7 +60,18 @@ class ClinicalRecord(models.Model):
     diagnosis = models.TextField("Краткий диагноз")
     doctor = models.ForeignKey(Doctor, verbose_name="Врач", on_delete=models.DO_NOTHING)
     date_time = models.DateTimeField("Время поступления", auto_now_add=True)
-    record = models.FileField("Файл", upload_to=record_file_name)
+    complaint = RichTextField("Жалобы при поступлении", blank=True, null=True)
+    anamnesis = RichTextField("Anamnesis morbi", blank=True, null=True)
+    habitual_intoxication = RichTextField("Привычные интоксикации", blank=True, null=True, default="отрицает.")
+    occupational_hazards = RichTextField("Профессиональные опасности", blank=True, null=True, default="отрицает.")
+    epidanamnesis = RichTextField("Эпиданамнез", blank=True, null=True, default="за границы Самарской области последние 14 дней не выезжал(а), контакт с лихорадящими больными отрицает.")
+    allergic_history = RichTextField("Аллергический анамнез", blank=True, null=True, default="не отягощен.")
+    blood_transfusion = RichTextField("Гемотрансфузии", blank=True, null=True, default="не проводились.")
+    expert_history = RichTextField("Экспертный анамнез", blank=True, null=True, default="в л/н не нуждается.")
+    past_illnesses = RichTextField("Перенесенные заболевания", blank=True, null=True, default="вирусный гепатит отриц., туберкулез отриц., ВИЧ отриц., сахарный диабет отриц.")
+    status_p_c = RichTextField("Status praesens communis", blank=True, null=True)
+    respiratory_system = RichTextField("Органы дыхания", blank=True, null=True)
+    record = models.FileField("Файл", upload_to=record_file_name, blank=True, null=True)
 
     class Meta:
         verbose_name = "История болезни"

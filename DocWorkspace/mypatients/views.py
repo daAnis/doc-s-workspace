@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 from datetime import date, datetime, timezone
 
 from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription
-from .forms import ExaminationForm, PrescriptionForm, PressureForm, TemperatureForm
+from .forms import ExaminationForm, PrescriptionForm, PressureForm, TemperatureForm, RecordForm
 
 
 def index(request):
@@ -29,8 +29,9 @@ def records_in_ward(request, ward):
 
 
 def record(request, ward, record_id):
+    form = RecordForm()
     patient = ClinicalRecord.objects.get(pk=record_id)
-    return render(request, "mypatients/patient.html", {"record": patient})
+    return render(request, "mypatients/patient.html", {"record": patient, "form": form})
 
 
 def examination(request, ward, record_id):
