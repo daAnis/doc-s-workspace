@@ -1,0 +1,45 @@
+{% load widget_tweaks %}
+
+<form id="admission-data" method="POST" action="{% url 'record_update' record.ward record.pk %}">
+    {% csrf_token %}
+    {{ form.media }}
+    {% autoescape off %}
+    <div class="form-group">
+        <strong><label for="{{ form.complaint.id_for_label }}">{{ form.complaint.label }}</label></strong>
+        {{ record.complaint }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.anamnesis.id_for_label }}">{{ form.anamnesis.label }}</label></strong>
+        {{ record.anamnesis }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.status_p_c.id_for_label }}">{{ form.status_p_c.label }}</label></strong>
+        {{ record.status_p_c }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.respiratory_system.id_for_label }}">{{ form.respiratory_system.label }}</label></strong>
+        {{ record.respiratory_system }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.circulatory_organs.id_for_label }}">{{ form.circulatory_organs.label }}</label></strong>
+        {{ record.circulatory_organs }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.digestive_organs.id_for_label }}">{{ form.digestive_organs.label }}</label></strong>
+        {{ record.digestive_organs }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.urinary_organs.id_for_label }}">{{ form.urinary_organs.label }}</label></strong>
+        {{ record.urinary_organs }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.status_localis.id_for_label }}">{{ form.status_localis.label }}</label></strong>
+        {{ record.status_localis }}
+    </div><br>
+    {% endautoescape %}
+    <div class="form-group">
+        <strong><label for="{{ form.primary_diagnosis.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.primary_diagnosis.label }}</label></strong>
+        {{ form.primary_diagnosis }}
+    </div><br>
+    <strong><p>Лечение согласовано.</p></strong>
+</form>

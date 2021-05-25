@@ -1,11 +1,18 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.template.loader import render_to_string
+from django.urls import reverse
 
 from datetime import date, datetime, timezone
 
 from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription
-from .forms import ExaminationForm, PrescriptionForm, PressureForm, TemperatureForm, RecordForm
+from .forms import (
+    ExaminationForm,
+    PrescriptionForm,
+    PressureForm,
+    TemperatureForm,
+    RecordForm,
+)
 
 
 def index(request):
@@ -29,9 +36,31 @@ def records_in_ward(request, ward):
 
 
 def record(request, ward, record_id):
-    form = RecordForm()
     patient = ClinicalRecord.objects.get(pk=record_id)
+    form = RecordForm(instance=patient)
     return render(request, "mypatients/patient.html", {"record": patient, "form": form})
+
+
+def record_update(request, ward, record_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    # if request.method == "POST":
+    #     recived_form = RecordForm(request.POST, instance=patient)
+    #     if recived_form.is_valid():
+    #         form = recived_form.save(commit=False)
+    #         if not form.primary_diagnosis:
+    #             form.primary_diagnosis = form.preliminary_diagnosis
+    #         form.save()
+    # else:
+    #     form = RecordForm(instance=patient)
+    recived_form = RecordForm(request.POST, instance=patient)
+    if recived_form.is_valid():
+        form = recived_form.save(commit=False)
+        if not form.primary_diagnosis:
+            form.primary_diagnosis = form.preliminary_diagnosis
+        form.save()
+    context = {"ward": ward, "record_id": record_id}
+    redirect_url = reverse("record", kwargs=context)
+    return HttpResponseRedirect(redirect_url)
 
 
 def examination(request, ward, record_id):

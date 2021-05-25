@@ -11,6 +11,10 @@ padding-right: 0;
 .tab-pane {
 margin-top: 1rem;
 }
+
+form>div {
+    display: initial !important;
+}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -25,7 +29,7 @@ margin-top: 1rem;
     <div class="container">
         <div class="row justify-content-between">
             <!--Right part-->
-            <div class="col-4">
+            <div class="col-8">
                 <nav class="nav flex-column">
                     <h4 class="nav-link">{{ record.patient.name }}&nbsp;&nbsp;&nbsp;
                         <a href="#">
@@ -83,9 +87,9 @@ margin-top: 1rem;
         <!--Links-->
         <nav>
             <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                <button class="nav-link active" id="nav-passport-data-tab" data-bs-toggle="tab"
+                <button class="nav-link" id="nav-passport-data-tab" data-bs-toggle="tab"
                     data-bs-target="#nav-passport-data" type="button" role="tab" aria-controls="nav-passport-data"
-                    aria-selected="true">Паспортные
+                    aria-selected="false">Паспортные
                     данные</button>
                 <button class="nav-link" id="nav-admission-data-tab" data-bs-toggle="tab"
                     data-bs-target="#nav-admission-data" type="button" role="tab" aria-controls="nav-admission-data"
@@ -96,28 +100,28 @@ margin-top: 1rem;
                     заведующим</button>
                 <button class="nav-link" id="nav-diagnoses-tab" data-bs-toggle="tab" data-bs-target="#nav-diagnoses"
                     type="button" role="tab" aria-controls="nav-diagnoses" aria-selected="false">Диагнозы</button>
-                <button class="nav-link" id="nav-diaries-tab" data-bs-toggle="tab" data-bs-target="#nav-diaries"
-                    type="button" role="tab" aria-controls="nav-diaries" aria-selected="false">Дневники</button>
+                <button class="nav-link active" id="nav-diaries-tab" data-bs-toggle="tab" data-bs-target="#nav-diaries"
+                    type="button" role="tab" aria-controls="nav-diaries" aria-selected="true">Дневники</button>
                 <button class="nav-link" id="nav-discharge-tab" data-bs-toggle="tab" data-bs-target="#nav-discharge"
                     type="button" role="tab" aria-controls="nav-discharge" aria-selected="false">Выписка</button>
             </div>
         </nav>
         <!--Content-->
         <div class="tab-content" id="nav-tabContent">
-            <div class="tab-pane fade show active" id="nav-passport-data" role="tabpanel"
+            <div class="tab-pane fade" id="nav-passport-data" role="tabpanel"
                 aria-labelledby="nav-passport-data-tab">
                 Паспортные данные
             </div>
             <div class="tab-pane fade" id="nav-admission-data" role="tabpanel" aria-labelledby="nav-admission-data-tab">
-                {% include 'mypatients/record_partials/record_form.html' %}
+                {% include 'mypatients/record_partials/admission_data_form.html' %}
             </div>
             <div class="tab-pane fade" id="nav-head-insp" role="tabpanel" aria-labelledby="nav-head-insp-tab">
-                Осмотр совместно с заведующим
+                {% include 'mypatients/record_partials/head_insp_form.html' %}
             </div>
             <div class="tab-pane fade" id="nav-diagnoses" role="tabpanel" aria-labelledby="nav-diagnoses-tab">
                 Диагнозы
             </div>
-            <div class="tab-pane fade" id="nav-diaries" role="tabpanel" aria-labelledby="nav-diaries-tab">
+            <div class="tab-pane fade show active" id="nav-diaries" role="tabpanel" aria-labelledby="nav-diaries-tab">
                 Дневники
             </div>
             <div class="tab-pane fade" id="nav-discharge" role="tabpanel" aria-labelledby="nav-discharge-tab">

@@ -1,0 +1,70 @@
+{% load widget_tweaks %}
+
+<form id="admission-data" method="POST" action="{% url 'record_update' record.ward record.pk %}">
+    {% csrf_token %}
+    {{ form.media }}
+    <div class="form-group">
+        <strong><label for="{{ form.complaint.id_for_label }}" style="margin-bottom: 1rem;">{{ form.complaint.label }}</label></strong>
+        {{ form.complaint }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.anamnesis.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.anamnesis.label }}</label></strong>
+        {{ form.anamnesis }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.habitual_intoxication.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.habitual_intoxication.label }}</label></strong>
+        {{ form.habitual_intoxication }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.occupational_hazards.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.occupational_hazards.label }}</label></strong>
+        {{ form.occupational_hazards }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.epidanamnesis.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.epidanamnesis.label }}</label></strong>
+        {{ form.epidanamnesis }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.allergic_history.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.allergic_history.label }}</label></strong>
+        {{ form.allergic_history }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.blood_transfusion.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.blood_transfusion.label }}</label></strong>
+        {{ form.blood_transfusion }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.expert_history.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.expert_history.label }}</label></strong>
+        {{ form.expert_history }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.past_illnesses.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.past_illnesses.label }}</label></strong>
+        {{ form.past_illnesses }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.status_p_c.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.status_p_c.label }}</label></strong>
+        {{ form.status_p_c }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.respiratory_system.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.respiratory_system.label }}</label></strong>
+        {{ form.respiratory_system }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.circulatory_organs.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.circulatory_organs.label }}</label></strong>
+        {{ form.circulatory_organs }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.digestive_organs.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.digestive_organs.label }}</label></strong>
+        {{ form.digestive_organs }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.urinary_organs.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.urinary_organs.label }}</label></strong>
+        {{ form.urinary_organs }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.status_localis.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.status_localis.label }}</label></strong>
+        {{ form.status_localis }}
+    </div>
+    <div class="form-group">
+        <strong><label for="{{ form.preliminary_diagnosis.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.preliminary_diagnosis.label }}</label></strong>
+        {{ form.preliminary_diagnosis }}
+    </div>
+</form>
