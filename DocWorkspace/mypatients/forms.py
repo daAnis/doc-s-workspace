@@ -1,10 +1,34 @@
 from django import forms
+from django.forms import inlineformset_factory
 
-from .models import Examination, Prescription, Pressure, Temperature, ClinicalRecord
+from .models import (
+    Examination,
+    Prescription,
+    Pressure,
+    Temperature,
+    ClinicalRecord,
+    Diary,
+    Patient,
+)
 
 DATE_INPUT_FORMATS = [
     "%Y-%m-%d",
 ]
+
+
+class DiaryForm(forms.ModelForm):
+    class Meta:
+        model = Diary
+        fields = ("date_time", "complaint", "status_p_c", "status_localis")
+
+
+DiariesFormSet = inlineformset_factory(
+    ClinicalRecord,
+    Diary,
+    form=DiaryForm,
+    extra=1,
+    can_order=True,
+)
 
 
 class ExaminationForm(forms.ModelForm):
@@ -64,4 +88,12 @@ class RecordForm(forms.ModelForm):
             "preliminary_diagnosis",
             "primary_diagnosis",
             "data_from_additional_research_methods",
+            "height",
+            "weight",
         )
+
+
+class PatientForm(forms.ModelForm):
+    class Meta:
+        model = Patient
+        fields = ("name", "birth_date", "phone_number")

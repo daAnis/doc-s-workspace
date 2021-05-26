@@ -5,13 +5,15 @@ from django.urls import reverse
 
 from datetime import date, datetime, timezone
 
-from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription
+from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription, Patient, Diary
 from .forms import (
     ExaminationForm,
     PrescriptionForm,
     PressureForm,
     TemperatureForm,
     RecordForm,
+    DiariesFormSet,
+    PatientForm
 )
 
 
@@ -37,31 +39,40 @@ def records_in_ward(request, ward):
 
 def record(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
+    human = Patient.objects.get(pk=patient.patient.pk)
     form = RecordForm(instance=patient)
-    return render(request, "mypatients/patient.html", {"record": patient, "form": form})
+    human_form = PatientForm(instance=human)
+    diaries = DiariesFormSet(instance=patient)
+    context = {"record": patient, "form": form, "human_form": human_form, 'diaries': diaries}
+    return render(request, "mypatients/patient.html", context)
 
 
 def record_update(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
-    # if request.method == "POST":
-    #     recived_form = RecordForm(request.POST, instance=patient)
-    #     if recived_form.is_valid():
-    #         form = recived_form.save(commit=False)
-    #         if not form.primary_diagnosis:
-    #             form.primary_diagnosis = form.preliminary_diagnosis
-    #         form.save()
-    # else:
-    #     form = RecordForm(instance=patient)
+    human = Patient.objects.get(pk=patient.patient.pk)
     recived_form = RecordForm(request.POST, instance=patient)
+    recived_human_form = PatientForm(request.POST, instance=human)
     if recived_form.is_valid():
-        form = recived_form.save(commit=False)
-        if not form.primary_diagnosis:
-            form.primary_diagnosis = form.preliminary_diagnosis
-        form.save()
+        if recived_form.has_changed():
+            form = recived_form.save(commit=False)
+            if not form.primary_diagnosis:
+                form.primary_diagnosis = form.preliminary_diagnosis
+            form.save()
+    if recived_human_form.is_valid():
+        if recived_human_form.has_changed():
+            recived_human_form.save()
     context = {"ward": ward, "record_id": record_id}
     redirect_url = reverse("record", kwargs=context)
     return HttpResponseRedirect(redirect_url)
 
+def diaries_update(request, ward, record_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    formset = DiariesFormSet(request.POST, instance=patient)
+    if formset.is_valid():
+        formset.save()
+    context = {"ward": ward, "record_id": record_id}
+    redirect_url = reverse("record", kwargs=context)
+    return HttpResponseRedirect(redirect_url)
 
 def examination(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)

@@ -1,0 +1,33 @@
+{% load widget_tweaks %}
+
+<form id="admission-data" method="POST" action="{% url 'record_update' record.ward record.pk %}">
+    {% csrf_token %}
+    {{ form.media }}
+    {% autoescape off %}
+    <div class="form-group">
+        <strong><label for="{{ form.primary_diagnosis.id_for_label }}">{{ form.primary_diagnosis.label }}</label></strong>
+        {{ record.primary_diagnosis }}
+    </div><br>
+    <strong><p><u>Диагноз установлен на основании:</u></p></strong>
+    <div class="form-group">
+        <strong><label for="{{ form.complaint.id_for_label }}">{{ form.complaint.label }}</label></strong>
+        {{ record.complaint }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.anamnesis.id_for_label }}">{{ form.anamnesis.label }}</label></strong>
+        {{ record.anamnesis }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.status_p_c.id_for_label }}">{{ form.status_p_c.label }}</label></strong>
+        {{ record.status_p_c }}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{ form.status_localis.id_for_label }}">{{ form.status_localis.label }}</label></strong>
+        {{ record.status_localis }}
+    </div><br>
+    {% endautoescape %}
+    <div class="form-group">
+        <strong><label for="{{ form.data_from_additional_research_methods.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.data_from_additional_research_methods.label }}</label></strong>
+        {{ form.data_from_additional_research_methods }}
+    </div>
+</form>

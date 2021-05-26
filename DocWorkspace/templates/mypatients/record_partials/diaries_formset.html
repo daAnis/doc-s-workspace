@@ -1,0 +1,24 @@
+{% load widget_tweaks %}
+
+<form id="admission-data" method="POST" action="{% url 'diaries_update' record.ward record.pk %}">
+    {% csrf_token %}
+    {{ diaries.management_form }}
+    {% for form in diaries %}
+        {{ form.media }}
+        {% if forloop.last %}
+        <p><strong>Добавить новый дневник:</strong></p>
+        {% endif %}
+        <strong><label for="{{ form.date_time.id_for_label }}" style="margin-bottom: 1rem;">{{ form.date_time.label }}</label></strong>
+        <div class="input-group" style="display: flex !important;">
+            {% render_field form.date_time class="form-control" %}
+        </div><br>
+        <div class="form-group">
+            <strong><label for="{{ form.complaint.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.complaint.label }}</label></strong>
+            {{ form.complaint }}
+        </div><br>
+        <div class="form-group">
+            <strong><label for="{{ form.status_localis.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.status_localis.label }}</label></strong>
+            {{ form.status_localis }}
+        </div><br><hr>
+    {% endfor %}
+</form>

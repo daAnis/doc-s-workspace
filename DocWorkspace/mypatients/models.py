@@ -1,10 +1,12 @@
 from django.db import models
 from django.urls import reverse
 
+from django.utils import timezone
+
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor.fields import RichTextField
 
-from .defaults import CLINACAL_RECORD_DEFAULTS
+from .defaults import CLINACAL_RECORD_DEFAULTS, DIARIES_DEFAULTS
 
 
 def record_file_name(instance, filename):
@@ -173,6 +175,8 @@ class ClinicalRecord(models.Model):
     data_from_additional_research_methods = RichTextField(
         "Данные дополнительных методов исследования", blank=True, null=True
     )
+    height = models.PositiveSmallIntegerField("Рост", blank=True, null=True)
+    weight = models.PositiveSmallIntegerField("Вес", blank=True, null=True)
     record = models.FileField("Файл", upload_to=record_file_name, blank=True, null=True)
 
     class Meta:
@@ -183,7 +187,35 @@ class ClinicalRecord(models.Model):
         return self.patient.name
 
     def get_absolute_url(self):
-        return reverse("ClinicalRecord_detail", kwargs={"pk": self.pk})
+        return reverse("record", kwargs={"ward": self.ward, "record_id": self.pk})
+
+class Diary(models.Model):
+
+    date_time = models.DateTimeField("Время", default=timezone.now)
+    complaint = RichTextField("Жалобы на", blank=True, null=True)
+    status_p_c = RichTextField(
+        "Объективный статус",
+        blank=True,
+        null=True,
+        default=DIARIES_DEFAULTS["status_p_c"],
+    )
+    status_localis = RichTextField(
+        "Неврологический статус",
+        blank=True,
+        null=True,
+        default=DIARIES_DEFAULTS["status_localis"],
+    )
+    record = models.ForeignKey(
+        ClinicalRecord, verbose_name="История болезни", on_delete=models.CASCADE
+    )
+
+    class Meta:
+        verbose_name = "Дневник"
+        verbose_name_plural = "Дневники"
+
+    def __str__(self):
+        return self.date_time
+
 
 
 class Temperature(models.Model):

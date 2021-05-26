@@ -1,0 +1,30 @@
+{% load widget_tweaks %}
+
+<form id="admission-data" method="POST" action="{% url 'record_update' record.ward record.pk %}">
+    {% csrf_token %}
+    <div class="form-group">
+        <strong><label for="{{  human_form.name.id_for_label }}">{{ human_form.name.label }}</label></strong>
+        {% render_field human_form.name class="form-control" %}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{  human_form.birth_date.id_for_label }}">
+            {{ human_form.birth_date.label}}</label></strong>
+        {% render_field human_form.birth_date class="form-control" type="date" %}
+    </div><br>
+    <div class="form-group">
+        <strong><label for="{{  human_form.phone_number.id_for_label }}">
+            {{ human_form.phone_number.label}}</label></strong>
+        {% render_field human_form.phone_number class="form-control" %}
+    </div><br>
+    <strong><label for="{{ form.height.id_for_label }}">{{ form.height.label }}</label></strong>
+    <div class="input-group" style="display: flex !important;">
+        {% render_field form.height class="form-control" %}
+        <span class="input-group-text">см</span>
+    </div><br>
+    <strong><label for="{{ form.weight.id_for_label }}">{{ form.weight.label }}</label></strong>
+    <div class="input-group" style="display: flex !important;">
+        {% render_field form.weight class="form-control" %}
+        <span class="input-group-text">кг</span>
+    </div>
+    <button type="submit" class="btn btn-primary" style="margin-top: 1rem;">Сохранить</button>
+</form>
