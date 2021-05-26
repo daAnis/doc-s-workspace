@@ -90,6 +90,7 @@ class RecordForm(forms.ModelForm):
             "data_from_additional_research_methods",
             "height",
             "weight",
+            "recommendation",
         )
 
 

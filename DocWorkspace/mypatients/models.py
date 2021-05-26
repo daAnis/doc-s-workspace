@@ -175,6 +175,7 @@ class ClinicalRecord(models.Model):
     data_from_additional_research_methods = RichTextField(
         "Данные дополнительных методов исследования", blank=True, null=True
     )
+    recommendation = RichTextField("Рекомендации", blank=True, null=True)
     height = models.PositiveSmallIntegerField("Рост", blank=True, null=True)
     weight = models.PositiveSmallIntegerField("Вес", blank=True, null=True)
     record = models.FileField("Файл", upload_to=record_file_name, blank=True, null=True)
