@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'phonenumber_field',
     'ckeditor',
     'widget_tweaks',
+    'django_extensions',
 ]
 
 MIDDLEWARE = [

@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse, HttpResponseRedirect, FileResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
+from django.core.files.base import ContentFile
 
 from docx import Document
 from htmldocx import HtmlToDocx
@@ -78,21 +79,24 @@ def diaries_update(request, ward, record_id):
     redirect_url = reverse("record", kwargs=context)
     return HttpResponseRedirect(redirect_url)
 
-def get_discharge(request, ward, record_id):
-    pass
 
-# def get_discharge(request, ward, record_id):
-#     record = ClinicalRecord.objects.get(pk=record_id)
-#     examination_list = Examination.objects.filter(record=record_id)
-#     prescription_list = Prescription.objects.filter(record=record_id)
-#     context = {'record': record, 'examination_list': examination_list, 'prescription_list': prescription_list}
-#     template = render_to_string("mypatients/examination_partials/partial_exam_list.html", context)
-#     document = Document()
-#     new_parser = HtmlToDocx()
-#     byte_io = BytesIO()
-#     new_parser.add_html_to_document(template, document)
-#     document.save(byte_io)
-#     return FileResponse(byte_io, as_attachment=True, filename=f'generated_{pk}.docx')
+def get_discharge(request, ward, record_id):
+    record = ClinicalRecord.objects.get(pk=record_id)
+    examination_list = Examination.objects.filter(record=record_id)
+    prescription_list = Prescription.objects.filter(record=record_id)
+    context = {'record': record, 'examination_list': examination_list, 'prescription_list': prescription_list}
+    template = render_to_string("mypatients/document_templates/discharge.html", context)
+    document = Document()
+    new_parser = HtmlToDocx()
+    byte_io = BytesIO()
+    new_parser.add_html_to_document(template, document)
+    document.save(byte_io)
+    record.discharge.delete()
+    byte_io.seek(0)
+    record.discharge.save("Выписка.docx", ContentFile(byte_io.read()))
+    data = dict()
+    data["html_template"] = template
+    return JsonResponse(data)
 
 def examination(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)

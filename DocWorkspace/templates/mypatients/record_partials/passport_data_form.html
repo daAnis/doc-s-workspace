@@ -16,6 +16,10 @@
             {{ human_form.phone_number.label}}</label></strong>
         {% render_field human_form.phone_number class="form-control" %}
     </div><br>
+    <div class="form-group">
+        <strong><label for="{{  human_form.address.id_for_label }}">{{ human_form.address.label }}</label></strong>
+        {% render_field human_form.address class="form-control" %}
+    </div><br>
     <strong><label for="{{ form.height.id_for_label }}">{{ form.height.label }}</label></strong>
     <div class="input-group" style="display: flex !important;">
         {% render_field form.height class="form-control" %}

@@ -1,0 +1,24 @@
+<p style="text-align:center">ГОСУДАРСТВЕННОЕ БЮДЖЕТНОЕ УЧРЕЖДЕНИЕ ЗДРАВООХРАНЕНИЯ САМАРСКОЙ ОБЛАСТИ&nbsp;</p>
+<p style="text-align:center"><strong>&laquo;САМАРСКАЯ ГОРОДСКАЯ БОЛЬНИЦА №7&raquo;&nbsp;</strong></p>
+<p style="text-align:center">443112, г.о. Самара, п. Управленческий, ул. Крайняя 17 тел./факс: 8(846) 950-34-66; e-mail:</p>
+<p style="text-align:center"><strong><u>mmugb7@mail.ru&nbsp;</u></strong></p>
+<p style="text-align:center"><strong>Выписной эпикриз.&nbsp;</strong></p>
+<p>Ф.И.O. {{ record.patient.name }}, {{ record.patient.birth_date|timesince }}</p>
+<p>Находился(-ась) на стационарном лечении в терапевтическом отделении (неврологическая койка) с {{ record.date_time|date:'d.m.Y' }} по {% now 'd.m.Y' %}</p>
+<p>Домашний адрес: {{ record.patient.address }}&nbsp;</p>
+{% autoescape off %}
+<p><strong>С диагнозом:</strong> {{ record.primary_diagnosis }}</p>
+<p><strong>Проведены лечебно &ndash; профилактические мероприятия:</strong>&nbsp; 
+{% for pr in prescription_list %}
+    {% if forloop.last %}
+        &nbsp;{{ pr }}.
+    {% else %}
+        &nbsp;{{ pr }},
+    {% endif %}
+{% endfor %}
+</p>
+<p>&nbsp;</p>
+<p><strong>Рекомендовано: </strong>{{ record.recommendation }}</p>
+{% endautoescape %}
+<p style="text-align:right">&nbsp;{% now "d.m.Y" %}</p>
+<p>Лечащий врач &nbsp;&nbsp;Воронцова А.П.</p>

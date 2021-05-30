@@ -70,6 +70,7 @@ class Patient(models.Model):
     name = models.CharField("ФИО", max_length=50)
     birth_date = models.DateField("Дата рождения")
     phone_number = PhoneNumberField("Номер телефона", blank=True, null=True)
+    address = models.CharField("Адрес", max_length=50, blank=True, null=True)
 
     class Meta:
         verbose_name = "Пациент"
@@ -178,7 +179,8 @@ class ClinicalRecord(models.Model):
     recommendation = RichTextField("Рекомендации", blank=True, null=True)
     height = models.PositiveSmallIntegerField("Рост", blank=True, null=True)
     weight = models.PositiveSmallIntegerField("Вес", blank=True, null=True)
-    record = models.FileField("Файл", upload_to=record_file_name, blank=True, null=True)
+    discharge = models.FileField("Выписка", upload_to=record_file_name, blank=True, null=True)
+    record = models.FileField("История", upload_to=record_file_name, blank=True, null=True)
 
     class Meta:
         verbose_name = "История болезни"

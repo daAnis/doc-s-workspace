@@ -43,7 +43,8 @@ display: initial !important;
                             </svg>
                         </a>
                     </h4>
-                    <a class="nav-link" href="{% url 'get_discharge' record.ward record.pk %}">
+                    <a class="nav-link js-download-discharge" href="#" download
+                        data-url="{% url 'get_discharge' record.ward record.pk %}">
                         <!--Upload-->
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-upload" viewBox="0 0 16 16">
@@ -127,10 +128,32 @@ display: initial !important;
                 {% include 'mypatients/record_partials/diaries_formset.html' %}
             </div>
             <div class="tab-pane fade" id="nav-discharge" role="tabpanel" aria-labelledby="nav-discharge-tab">
-                Выписка
+                {% include 'mypatients/record_partials/discharge.html' %}
             </div>
         </div>
     </div>
     <!--End of bottom part-->
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+    integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+    $(function () {
+        var downloadDischarge = function () {
+            var btn = $(this);
+            $.ajax({
+                url: btn.attr("data-url"),
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    $(".discharge-content").html(data.html_template);
+                }
+            });
+        };
+        {% if record.discharge %}
+            $(".js-download-discharge").attr('href', '{{ record.discharge.url }}')
+        {% endif %}
+        $(".js-download-discharge").click(downloadDischarge);
+    });
+</script>
 {% endblock %}

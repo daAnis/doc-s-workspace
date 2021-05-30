@@ -97,4 +97,4 @@ class RecordForm(forms.ModelForm):
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ("name", "birth_date", "phone_number")
+        fields = ("name", "birth_date", "phone_number", "address",)

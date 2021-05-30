@@ -1,0 +1,11 @@
+<form id="discharge" method="POST" action="{% url 'record_update' record.ward record.pk %}">
+    {% csrf_token %}
+    {{ form.media }}
+    <div class="form-group">
+        <strong><label for="{{ form.recommendation.id_for_label }}" style="margin-bottom: 1rem; margin-top:1rem;">{{ form.recommendation.label }}</label></strong>
+        {{ form.recommendation }}
+    </div>
+</form>
+<p>&nbsp;</p>
+<p><strong>Предпросмотр</strong></p>
+<div class="discharge-content"></div>
