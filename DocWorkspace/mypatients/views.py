@@ -10,7 +10,15 @@ from io import BytesIO
 
 from datetime import date, datetime, timezone
 
-from .models import ClinicalRecord, Examination, Temperature, Pressure, Prescription, Patient, Diary
+from .models import (
+    ClinicalRecord,
+    Examination,
+    Temperature,
+    Pressure,
+    Prescription,
+    Patient,
+    Diary,
+)
 from .forms import (
     ExaminationForm,
     PrescriptionForm,
@@ -18,7 +26,7 @@ from .forms import (
     TemperatureForm,
     RecordForm,
     DiariesFormSet,
-    PatientForm
+    PatientForm,
 )
 
 
@@ -48,21 +56,19 @@ def record(request, ward, record_id):
     form = RecordForm(instance=patient)
     human_form = PatientForm(instance=human)
     diaries = DiariesFormSet(instance=patient)
-    context = {"record": patient, "form": form, "human_form": human_form, 'diaries': diaries}
+    context = {
+        "record": patient,
+        "form": form,
+        "human_form": human_form,
+        "diaries": diaries,
+    }
     return render(request, "mypatients/patient.html", context)
 
 
-def record_update(request, ward, record_id):
+def patient_update(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     human = Patient.objects.get(pk=patient.patient.pk)
-    recived_form = RecordForm(request.POST, instance=patient)
     recived_human_form = PatientForm(request.POST, instance=human)
-    if recived_form.is_valid():
-        if recived_form.has_changed():
-            form = recived_form.save(commit=False)
-            if not form.primary_diagnosis:
-                form.primary_diagnosis = form.preliminary_diagnosis
-            form.save()
     if recived_human_form.is_valid():
         if recived_human_form.has_changed():
             recived_human_form.save()
@@ -70,11 +76,29 @@ def record_update(request, ward, record_id):
     redirect_url = reverse("record", kwargs=context)
     return HttpResponseRedirect(redirect_url)
 
+
+def record_update(request, ward, record_id):
+    patient = ClinicalRecord.objects.get(pk=record_id)
+    recived_form = RecordForm(request.POST, instance=patient)
+    print(recived_form)
+    if recived_form.is_valid():
+        if recived_form.has_changed():
+            form = recived_form.save(commit=False)
+            if not form.primary_diagnosis:
+                form.primary_diagnosis = form.preliminary_diagnosis
+            form.save()
+    context = {"ward": ward, "record_id": record_id}
+    redirect_url = reverse("record", kwargs=context)
+    return HttpResponseRedirect(redirect_url)
+
+
 def diaries_update(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     formset = DiariesFormSet(request.POST, instance=patient)
     if formset.is_valid():
         formset.save()
+    else:
+        print(formset.errors)
     context = {"ward": ward, "record_id": record_id}
     redirect_url = reverse("record", kwargs=context)
     return HttpResponseRedirect(redirect_url)
@@ -84,7 +108,11 @@ def get_discharge(request, ward, record_id):
     record = ClinicalRecord.objects.get(pk=record_id)
     examination_list = Examination.objects.filter(record=record_id)
     prescription_list = Prescription.objects.filter(record=record_id)
-    context = {'record': record, 'examination_list': examination_list, 'prescription_list': prescription_list}
+    context = {
+        "record": record,
+        "examination_list": examination_list,
+        "prescription_list": prescription_list,
+    }
     template = render_to_string("mypatients/document_templates/discharge.html", context)
     document = Document()
     new_parser = HtmlToDocx()
@@ -97,6 +125,7 @@ def get_discharge(request, ward, record_id):
     data = dict()
     data["html_template"] = template
     return JsonResponse(data)
+
 
 def examination(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)

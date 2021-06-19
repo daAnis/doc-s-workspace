@@ -71,6 +71,8 @@ class Patient(models.Model):
     birth_date = models.DateField("Дата рождения")
     phone_number = PhoneNumberField("Номер телефона", blank=True, null=True)
     address = models.CharField("Адрес", max_length=50, blank=True, null=True)
+    height = models.PositiveSmallIntegerField("Рост", blank=True, null=True)
+    weight = models.PositiveSmallIntegerField("Вес", blank=True, null=True)
 
     class Meta:
         verbose_name = "Пациент"
@@ -177,8 +179,6 @@ class ClinicalRecord(models.Model):
         "Данные дополнительных методов исследования", blank=True, null=True
     )
     recommendation = RichTextField("Рекомендации", blank=True, null=True)
-    height = models.PositiveSmallIntegerField("Рост", blank=True, null=True)
-    weight = models.PositiveSmallIntegerField("Вес", blank=True, null=True)
     discharge = models.FileField("Выписка", upload_to=record_file_name, blank=True, null=True)
     record = models.FileField("История", upload_to=record_file_name, blank=True, null=True)
 
@@ -217,7 +217,7 @@ class Diary(models.Model):
         verbose_name_plural = "Дневники"
 
     def __str__(self):
-        return self.date_time
+        return self.date_time.strftime("%Y-%m-%d")
 
 
 

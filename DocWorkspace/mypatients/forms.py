@@ -88,8 +88,6 @@ class RecordForm(forms.ModelForm):
             "preliminary_diagnosis",
             "primary_diagnosis",
             "data_from_additional_research_methods",
-            "height",
-            "weight",
             "recommendation",
         )
 
@@ -97,4 +95,4 @@ class RecordForm(forms.ModelForm):
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
-        fields = ("name", "birth_date", "phone_number", "address",)
+        fields = ("name", "birth_date", "phone_number", "address", "height", "weight",)
