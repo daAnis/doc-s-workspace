@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponseRedirect, FileResponse
 from django.template.loader import render_to_string
 from django.urls import reverse
 from django.core.files.base import ContentFile
+from django.contrib.auth.decorators import login_required
 
 from docx import Document
 from htmldocx import HtmlToDocx
@@ -29,7 +30,7 @@ from .forms import (
     PatientForm,
 )
 
-
+@login_required
 def wards(request):
     records = ClinicalRecord.objects.all()
     wards = set()

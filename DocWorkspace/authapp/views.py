@@ -27,17 +27,14 @@ class RegistrationView(CreateView):
         success_url = reverse('login')
         if next_url:
             success_url += '?next={}'.format(next_url)
-
         return success_url
 
 
-class ProfileView(UpdateView):
-    model = User
-    fields = ['name', 'phone', 'date_of_birth', 'picture']
-    template_name = 'registration/profile.html'
-
-    def get_success_url(self):
-        return reverse('index')
-
-    def get_object(self):
-        return self.request.user
+def index(request):
+    if request.user.is_superuser:
+        return redirect('admin/')
+    if request.user.is_staff:
+        return redirect('admin/')
+    if request.user.kind.kind == 'D':
+        return redirect('wards')
+    return redirect('index')

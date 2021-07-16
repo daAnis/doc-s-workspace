@@ -6,7 +6,7 @@ from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor.fields import RichTextField
 
-from authapp.models import User
+from django.conf import settings
 
 from .defaults import CLINACAL_RECORD_DEFAULTS, DIARIES_DEFAULTS
 
@@ -40,7 +40,7 @@ class Notification(models.Model):
     value = models.TextField("Уведомление")
     url = models.URLField("Ссылка")
     date_time = models.DateTimeField("Время", auto_now_add=True)
-    doctor = models.ForeignKey(User, verbose_name="Врач", on_delete=models.CASCADE)
+    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Врач", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Уведомление"
@@ -77,7 +77,7 @@ class ClinicalRecord(models.Model):
     )
     ward = models.PositiveSmallIntegerField("Номер палаты")
     diagnosis = models.TextField("Краткий диагноз")
-    doctor = models.ForeignKey(User, verbose_name="Врач", on_delete=models.DO_NOTHING)
+    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name="Врач", on_delete=models.DO_NOTHING)
     date_time = models.DateTimeField("Время поступления", auto_now_add=True)
     complaint = RichTextField("Жалобы при поступлении", blank=True, null=True)
     anamnesis = RichTextField("Anamnesis morbi", blank=True, null=True)

@@ -1,4 +1,5 @@
 from django import forms
+from django.urls import reverse
 from django.contrib.auth.models import Group
 from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
@@ -43,7 +44,8 @@ class UserCreationForm(forms.ModelForm):
 
 
 class UserChangeForm(forms.ModelForm):
-    password = ReadOnlyPasswordHashField()
+    password = ReadOnlyPasswordHashField(label=("Пароль"),
+        help_text=(f"<a href=\'/password_change/\'>Изменить пароль...</a>"))
 
     class Meta:
         model = User

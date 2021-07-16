@@ -12,11 +12,18 @@ class UserKind(models.Model):
     )
     kind = models.CharField('Вид деятельности', max_length=1, choices=USER_KINDS)
 
+    class Meta:
+        verbose_name = 'Вид деятельности'
+        verbose_name_plural = 'Виды деятельности'
+    
+    def __str__(self):
+        return self.get_kind_display()
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField('Логин', max_length=30, unique=True)
     full_name = models.CharField('ФИО', max_length=100)
-    kind = models.ForeignKey(UserKind, on_delete=models.CASCADE, null=True)
+    kind = models.ForeignKey(UserKind, verbose_name='Вид деятельности', on_delete=models.CASCADE, null=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
 
