@@ -32,7 +32,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'authapp.apps.AuthappConfig',
     'mypatients.apps.MypatientsConfig',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -108,6 +110,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'authapp.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

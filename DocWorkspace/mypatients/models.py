@@ -6,6 +6,8 @@ from django.utils import timezone
 from phonenumber_field.modelfields import PhoneNumberField
 from ckeditor.fields import RichTextField
 
+from authapp.models import User
+
 from .defaults import CLINACAL_RECORD_DEFAULTS, DIARIES_DEFAULTS
 
 
@@ -33,26 +35,12 @@ def examination_file_name(instance, filename):
     )
 
 
-class Doctor(models.Model):
-
-    name = models.CharField("ФИО", max_length=50)
-    login = models.CharField("Логин", max_length=20)
-    password = models.CharField("Пароль", max_length=20)
-
-    class Meta:
-        verbose_name = "Врач"
-        verbose_name_plural = "Врачи"
-
-    def __str__(self):
-        return self.name
-
-
 class Notification(models.Model):
 
     value = models.TextField("Уведомление")
     url = models.URLField("Ссылка")
     date_time = models.DateTimeField("Время", auto_now_add=True)
-    doctor = models.ForeignKey(Doctor, verbose_name="Врач", on_delete=models.CASCADE)
+    doctor = models.ForeignKey(User, verbose_name="Врач", on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = "Уведомление"
@@ -89,7 +77,7 @@ class ClinicalRecord(models.Model):
     )
     ward = models.PositiveSmallIntegerField("Номер палаты")
     diagnosis = models.TextField("Краткий диагноз")
-    doctor = models.ForeignKey(Doctor, verbose_name="Врач", on_delete=models.DO_NOTHING)
+    doctor = models.ForeignKey(User, verbose_name="Врач", on_delete=models.DO_NOTHING)
     date_time = models.DateTimeField("Время поступления", auto_now_add=True)
     complaint = RichTextField("Жалобы при поступлении", blank=True, null=True)
     anamnesis = RichTextField("Anamnesis morbi", blank=True, null=True)

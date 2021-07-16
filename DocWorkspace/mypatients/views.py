@@ -30,10 +30,6 @@ from .forms import (
 )
 
 
-def index(request):
-    return render(request, "mypatients/index.html", {})
-
-
 def wards(request):
     records = ClinicalRecord.objects.all()
     wards = set()
