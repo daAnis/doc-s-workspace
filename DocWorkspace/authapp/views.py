@@ -1,12 +1,7 @@
-from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login as auth_login, logout
-from django.contrib import messages
-from django.contrib.auth.forms import AuthenticationForm
-from django.shortcuts import render
+from django.shortcuts import redirect
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView
-from django.views.generic.edit import CreateView, UpdateView
+from django.contrib.auth.views import PasswordChangeView
+from django.views.generic.edit import CreateView
 from django.urls import reverse
 
 from .models import User
@@ -30,7 +25,17 @@ class RegistrationView(CreateView):
         return success_url
 
 
+class PasswordChangeView(PasswordChangeView):
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        meta_info = self.request.META.get('HTTP_REFERER').split('/')
+        kwargs['user'] = User.objects.get(pk=meta_info[meta_info.index('user') + 1])
+        return kwargs
+
 def index(request):
+    if request.user.is_anonymous:
+        return redirect('login')
     if request.user.is_superuser:
         return redirect('admin/')
     if request.user.is_staff:

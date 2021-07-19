@@ -45,11 +45,20 @@ class UserCreationForm(forms.ModelForm):
 
 class UserChangeForm(forms.ModelForm):
     password = ReadOnlyPasswordHashField(label=("Пароль"),
-        help_text=(f"<a href=\'/password_change/\'>Изменить пароль...</a>"))
+        help_text=("<a href=\'{}\'>Изменить пароль...</a>"))
 
     class Meta:
         model = User
         fields = ('username', 'full_name', 'kind', 'password', 'is_active', 'is_superuser')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        password = self.fields.get('password')
+        if password:
+            password.help_text = password.help_text.format('/password_change/')
+        user_permissions = self.fields.get('user_permissions')
+        if user_permissions:
+            user_permissions.queryset = user_permissions.queryset.select_related('content_type')
 
     def clean_password(self):
         return self.initial["password"]

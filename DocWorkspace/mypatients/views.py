@@ -32,7 +32,7 @@ from .forms import (
 
 @login_required
 def wards(request):
-    records = ClinicalRecord.objects.all()
+    records = ClinicalRecord.objects.filter(doctor=request.user)
     wards = set()
     for r in records:
         wards.add(r.ward)
