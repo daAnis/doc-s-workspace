@@ -1,6 +1,7 @@
+from django.http.response import HttpResponseRedirect
 from django.shortcuts import redirect
 
-from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.views import PasswordChangeView, PasswordChangeDoneView
 from django.views.generic.edit import CreateView
 from django.urls import reverse
 
@@ -26,12 +27,28 @@ class RegistrationView(CreateView):
 
 
 class PasswordChangeView(PasswordChangeView):
-    
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
+
+    def get_current_user(self):
         meta_info = self.request.META.get('HTTP_REFERER').split('/')
-        kwargs['user'] = User.objects.get(pk=meta_info[meta_info.index('user') + 1])
-        return kwargs
+        if 'user' in meta_info:
+            return User.objects.get(pk=meta_info[meta_info.index('user') + 1]).pk
+
+    def get_context_data(self, **kwargs):
+        context = super(PasswordChangeView, self).get_context_data(**kwargs)
+        current_user = self.get_current_user()
+        if current_user:
+            context['current_user'] = current_user
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        """
+            В коде отсутсвует сравнение введеных паролей
+        """
+        user = User.objects.get(pk=self.request.POST.get('current_user'))
+        user.set_password(self.request.POST.get('new_password1'))
+        user.save()
+        return HttpResponseRedirect(self.get_success_url())
+
 
 def index(request):
     if request.user.is_anonymous:
