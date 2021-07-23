@@ -45,17 +45,42 @@
 </head>
 
 <body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+    integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+    $(function () {
+        var timer;
+        var getNotifications = function () {
+            $.ajax({
+                type: 'GET',
+                url: "{% url 'get_notifications' %}",
+                success: function (result) {
+                    $('#messages-list').html(result.html_notifications);
+                    // 10 seconds
+                    timer = setTimeout(getNotifications, 10000);
+                }
+            });
+        };
+
+        var hideMessagesBar = function() {
+            clearTimeout(timer);
+        };
+
+        $("#messages-btn").click(getNotifications);
+        $("#offcanvasWithBackdrop").on("hide.bs.offcanvas", hideMessagesBar);
+    });
+    </script>
     {% block navbars %}
     <!--Navbar with username-->
     <nav class="py-2 bg-dark text-white" style="padding-bottom: 0 !important;">
         <div class="container d-flex flex-wrap">
             <ul class="nav me-auto flex-column">
-                <li class="nav-item"><strong class="navbar-brand d-flex align-items-center">{{ user.full_name
-                        }}</strong></li>
+                <li class="nav-item"><strong class="navbar-brand d-flex align-items-center">{{ user.full_name }}</strong></li>
                 <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link text-white"
                         style="padding: 0;">Выйти</a></li>
             </ul>
-            <ul>
+            <ul style="width: 60%;">
                 {% block search %}
                 <!--Search navbar-->
                 <form class="container-fluid" style="padding-right: 0;">
@@ -69,6 +94,7 @@
                             </svg>
                         </span>
                     </div>
+                    {% block extra-search-fields %}
                     <div class="form-check form-check-inline">
                         <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
                             value="option1" checked>
@@ -83,13 +109,11 @@
                         <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
                         <label class="form-check-label" for="inlineCheckbox1">Архив</label>
                     </div>
+                    {% endblock extra-search-fields %}
                 </form>
                 <!--End of search navbar-->
                 {% endblock search %}
             </ul>
-            {% comment %} <ul class="nav">
-                <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link text-white px-2">Выйти</a></li>
-            </ul> {% endcomment %}
         </div>
     </nav>
     <!--End of navbar with username-->
@@ -105,17 +129,17 @@
             </nav>
             {% block messages-button %}
             <div style="z-index:3; position:relative;">
-                <a class="stretched-link" data-bs-toggle="offcanvas" href="#offcanvasWithBackdrop" role="button"
-                    aria-controls="offcanvasWithBackdrop"></a>
+                <a id="messages-btn" class="stretched-link" data-bs-toggle="offcanvas" href="#offcanvasWithBackdrop"
+                    role="button" aria-controls="offcanvasWithBackdrop"></a>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
                     class="bi bi-envelope-fill" viewBox="0 0 16 16">
                     <path
                         d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555zM0 4.697v7.104l5.803-3.558L0 4.697zM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757zm3.436-.586L16 11.801V4.697l-5.803 3.546z" />
                 </svg>
-                <span
+                <!-- <span
                     class="position-absolute top-0 start-100 translate-middle badge border border-danger rounded-circle bg-danger p-1">
                     <span class="visually-hidden">unread messages</span>
-                </span>
+                </span> -->
             </div>
             {% endblock messages-button %}
         </div>
@@ -130,21 +154,8 @@
         <div class="offcanvas-header">
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
-            <div class="list-group">
-                {% for n in notifications %}
-                <a href="{{ n.url }}" class="list-group-item list-group-item-action border-0">
-                    <div class="d-flex w-100 justify-content-between">
-                        <small>{{ n.date_time|timeuntil }}</small>
-                    </div>
-                    <p class="mb-1">{{ n.value }}<small class="link-primary">&nbsp;&nbsp;&nbsp;Перейти...</small></p>
-                </a>
-                {% empty %}
-                <a class="list-group-item list-group-item-action border-0">
-                    <p class="mb-1">Нет уведомлений</p>
-                </a>
-                {% endfor %}
-            </div>
+        <div id="messages-list" class="offcanvas-body">
+            {% include 'mypatients/shared_partials/partial_notifications_list.html' %}
         </div>
     </div>
     <!--End of sidebar messages-->

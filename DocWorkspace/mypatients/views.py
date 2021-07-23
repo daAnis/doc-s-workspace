@@ -19,6 +19,7 @@ from .models import (
     Prescription,
     Patient,
     Diary,
+    Notification,
 )
 from .forms import (
     ExaminationForm,
@@ -31,6 +32,19 @@ from .forms import (
 )
 
 @login_required
+def get_notifications(request):
+    notifications = Notification.objects.filter(doctor=request.user).order_by('-date_time')
+    data = dict()
+    data["html_notifications"] = render_to_string(
+                "mypatients/shared_partials/partial_notifications_list.html",
+                {
+                    "notifications": notifications
+                },
+            )
+    return JsonResponse(data)
+
+
+@login_required
 def wards(request):
     records = ClinicalRecord.objects.filter(doctor=request.user)
     wards = set()
@@ -40,6 +54,7 @@ def wards(request):
     return render(request, "mypatients/wards.html", {"wards": s_wards})
 
 
+@login_required
 def records_in_ward(request, ward):
     records = ClinicalRecord.objects.filter(ward=ward)
     return render(
@@ -47,6 +62,7 @@ def records_in_ward(request, ward):
     )
 
 
+@login_required
 def record(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     human = Patient.objects.get(pk=patient.patient.pk)
@@ -62,6 +78,7 @@ def record(request, ward, record_id):
     return render(request, "mypatients/patient.html", context)
 
 
+@login_required
 def patient_update(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     human = Patient.objects.get(pk=patient.patient.pk)
@@ -74,6 +91,7 @@ def patient_update(request, ward, record_id):
     return HttpResponseRedirect(redirect_url)
 
 
+@login_required
 def record_update(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     recived_form = RecordForm(request.POST, instance=patient)
@@ -89,6 +107,7 @@ def record_update(request, ward, record_id):
     return HttpResponseRedirect(redirect_url)
 
 
+@login_required
 def diaries_update(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     formset = DiariesFormSet(request.POST, instance=patient)
@@ -101,6 +120,7 @@ def diaries_update(request, ward, record_id):
     return HttpResponseRedirect(redirect_url)
 
 
+@login_required
 def get_discharge(request, ward, record_id):
     record = ClinicalRecord.objects.get(pk=record_id)
     examination_list = Examination.objects.filter(record=record_id)
@@ -124,6 +144,7 @@ def get_discharge(request, ward, record_id):
     return JsonResponse(data)
 
 
+@login_required
 def examination(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     exam_list = Examination.objects.filter(record=record_id)
@@ -134,6 +155,7 @@ def examination(request, ward, record_id):
     )
 
 
+@login_required
 def save_examination_form(request, form, record_id, template_name):
     patient = ClinicalRecord.objects.get(pk=record_id)
     data = dict()
@@ -158,6 +180,7 @@ def save_examination_form(request, form, record_id, template_name):
     return JsonResponse(data)
 
 
+@login_required
 def examination_create(request, ward, record_id):
     if request.method == "POST":
         form = ExaminationForm(request.POST)
@@ -171,6 +194,7 @@ def examination_create(request, ward, record_id):
     )
 
 
+@login_required
 def examination_update(request, ward, record_id, exam_id):
     exam = Examination.objects.get(pk=exam_id)
     if request.method == "POST":
@@ -185,6 +209,7 @@ def examination_update(request, ward, record_id, exam_id):
     )
 
 
+@login_required
 def examination_delete(request, ward, record_id, exam_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     exam = Examination.objects.get(pk=exam_id)
@@ -213,6 +238,7 @@ def examination_delete(request, ward, record_id, exam_id):
     return JsonResponse(data)
 
 
+@login_required
 def observation(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     temps = Temperature.objects.filter(record=record_id)
@@ -224,6 +250,7 @@ def observation(request, ward, record_id):
     )
 
 
+@login_required
 def save_bpp_form(request, form, record_id, template_name):
     patient = ClinicalRecord.objects.get(pk=record_id)
     data = dict()
@@ -248,6 +275,7 @@ def save_bpp_form(request, form, record_id, template_name):
     return JsonResponse(data)
 
 
+@login_required
 def bpp_create(request, ward, record_id):
     if request.method == "POST":
         form = PressureForm(request.POST)
@@ -261,6 +289,7 @@ def bpp_create(request, ward, record_id):
     )
 
 
+@login_required
 def bpp_update(request, ward, record_id, bpp_id):
     bpp = Pressure.objects.get(pk=bpp_id)
     if request.method == "POST":
@@ -275,6 +304,7 @@ def bpp_update(request, ward, record_id, bpp_id):
     )
 
 
+@login_required
 def bpp_delete(request, ward, record_id, bpp_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     bpp = Pressure.objects.get(pk=bpp_id)
@@ -303,6 +333,7 @@ def bpp_delete(request, ward, record_id, bpp_id):
     return JsonResponse(data)
 
 
+@login_required
 def temp_get(request, ward, record_id):
     labels = []
     data = []
@@ -318,6 +349,7 @@ def temp_get(request, ward, record_id):
     )
 
 
+@login_required
 def save_temp_form(request, form, record_id, template_name):
     patient = ClinicalRecord.objects.get(pk=record_id)
     data = dict()
@@ -335,6 +367,7 @@ def save_temp_form(request, form, record_id, template_name):
     return JsonResponse(data)
 
 
+@login_required
 def temp_create(request, ward, record_id):
     if request.method == "POST":
         form = TemperatureForm(request.POST)
@@ -348,6 +381,7 @@ def temp_create(request, ward, record_id):
     )
 
 
+@login_required
 def temp_update_get(request, ward, record_id, temp_label):
     date = datetime.strptime(temp_label, "%Y-%m-%dT%H:%M:%S.%fZ")
     temps = Temperature.objects.filter(record=record_id)
@@ -375,6 +409,7 @@ def temp_update_get(request, ward, record_id, temp_label):
     return JsonResponse(data)
 
 
+@login_required
 def temp_update_post(request, ward, record_id, temp_id):
     temp = Temperature.objects.get(pk=temp_id)
     form = TemperatureForm(request.POST, instance=temp)
@@ -397,6 +432,7 @@ def temp_update_post(request, ward, record_id, temp_id):
     return JsonResponse(data)
 
 
+@login_required
 def temp_delete(request, ward, record_id, temp_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     temp = Temperature.objects.get(pk=temp_id)
@@ -417,6 +453,7 @@ def temp_delete(request, ward, record_id, temp_id):
     return JsonResponse(data)
 
 
+@login_required
 def prescription(request, ward, record_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     presc_list = Prescription.objects.filter(record=record_id)
@@ -427,6 +464,7 @@ def prescription(request, ward, record_id):
     )
 
 
+@login_required
 def save_prescription_form(request, form, record_id, template_name):
     patient = ClinicalRecord.objects.get(pk=record_id)
     data = dict()
@@ -451,6 +489,7 @@ def save_prescription_form(request, form, record_id, template_name):
     return JsonResponse(data)
 
 
+@login_required
 def prescription_create(request, ward, record_id):
     if request.method == "POST":
         form = PrescriptionForm(request.POST)
@@ -464,6 +503,7 @@ def prescription_create(request, ward, record_id):
     )
 
 
+@login_required
 def prescription_update(request, ward, record_id, pr_id):
     pr = Prescription.objects.get(pk=pr_id)
     if request.method == "POST":
@@ -478,6 +518,7 @@ def prescription_update(request, ward, record_id, pr_id):
     )
 
 
+@login_required
 def prescription_delete(request, ward, record_id, pr_id):
     patient = ClinicalRecord.objects.get(pk=record_id)
     pr = Prescription.objects.get(pk=pr_id)
