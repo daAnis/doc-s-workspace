@@ -80,7 +80,7 @@
                 <li class="nav-item"><a href="{% url 'logout' %}" class="nav-link text-white"
                         style="padding: 0;">Выйти</a></li>
             </ul>
-            <ul style="width: 60%;">
+            <ul style="width: 60%; position: relative;">
                 {% block search %}
                 <!--Search navbar-->
                 <form class="container-fluid" style="padding-right: 0;">
@@ -111,6 +111,7 @@
                     </div>
                     {% endblock extra-search-fields %}
                 </form>
+                <div id="search-box-result" class="position-absolute top-0 start-0"></div>
                 <!--End of search navbar-->
                 {% endblock search %}
             </ul>
