@@ -68,7 +68,7 @@
                 url: "{% url 'get_notifications' %}",
                 success: function (result) {
                     $('#messages-list').html(result.html_notifications);
-                    // 10 seconds
+                    // 60 seconds
                     timer = setTimeout(getNotifications, 60000);
                 }
             });
@@ -92,40 +92,16 @@
                         style="padding: 0;">Выйти</a></li>
             </ul>
             <ul style="width: 60%; position: relative;">
+                <li class="nav-item"><a href="{% url 'emergency_app' %}" class="nav-link text-white">Перейти в режим приемного покоя</a></li>
+            </ul>
+            {% comment %} <ul style="width: 60%; position: relative;">
                 {% block search %}
                 <!--Search navbar-->
-                <form class="container-fluid">
-                    <div class="input-group">
-                        <input type="text" class="form-control" style="padding-top: 0; padding-bottom: 0;">
-                        <span class="input-group-text">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-search" viewBox="0 0 16 16">
-                                <path
-                                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                            </svg>
-                        </span>
-                    </div>
-                    {% block extra-search-fields %}
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1"
-                            value="option1" checked>
-                        <label class="form-check-label" for="inlineRadio1">Мои пациенты</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2"
-                            value="option2">
-                        <label class="form-check-label" for="inlineRadio2">Все пациенты</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="option1">
-                        <label class="form-check-label" for="inlineCheckbox1">Архив</label>
-                    </div>
-                    {% endblock extra-search-fields %}
-                </form>
+                {% include 'mypatients/shared_partials/partial_search_form.html' %}
                 <div id="search-box-result" class="container-fluid overflow-auto position-absolute bottom-0"></div>
                 <!--End of search navbar-->
                 {% endblock search %}
-            </ul>
+            </ul> {% endcomment %}
         </div>
     </nav>
     <!--End of navbar with username-->

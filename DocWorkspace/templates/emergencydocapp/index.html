@@ -1,0 +1,53 @@
+{% extends 'mypatients/_layout.html' %}
+{% load static %}
+{% load widget_tweaks %}
+
+{% block title %}Врач приемного покоя{% endblock %}
+
+{% block style %}{% endblock style %}
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+<form id="s-p-form" method="POST" action="{% url 'search_p' %}" style="width: 50%;">
+    {% csrf_token %}
+    <div class="input-group">
+    <input name="search_field" id="search_field" type="text" class="form-control" style="padding-top: 0; padding-bottom: 0;">
+        {% comment %} {% render_field form.name type="text" class="form-control" style="padding-top: 0; padding-bottom: 0;" %} {% endcomment %}
+        <span class="input-group-text">
+            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                class="bi bi-search" viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+            </svg>
+        </span>
+    </div>
+</form>
+<div id="p-search-res" class="album py-5 bg-light"></div>
+
+<script>
+    $(function () {
+        var getPatientsSearch = function () {
+            query = $('#search_field').val();
+            form = $('#s-p-form');
+            if ((query != '') && (query.length > 3)) {
+                $.ajax({
+                    type: form.attr("method"),
+                    url: form.attr("action"),
+                    data: form.serialize(),
+                    dataType: 'json',
+                    success: function (result) {
+                        $('#p-search-res').html(result.html_patients);
+                    }
+                });
+            }
+        };
+
+        var fireSubmitForm = function() {
+            $('#s-p-form').submit();
+        };
+
+        $("#search_field").on("keyup", getPatientsSearch);
+        //$('#s-p-form').on('submit', getPatientsSearch);
+    });
+</script>
+{% endblock %}

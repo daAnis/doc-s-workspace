@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'authapp.apps.AuthappConfig',
     'mypatients.apps.MypatientsConfig',
+    'emergencydocapp.apps.EmergencydocappConfig',
 
     'django.contrib.admin',
     'django.contrib.auth',

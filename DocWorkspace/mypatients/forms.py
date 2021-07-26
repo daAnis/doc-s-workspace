@@ -1,4 +1,5 @@
 from django import forms
+from django.db.models import fields
 from django.forms import inlineformset_factory
 
 from .models import (
@@ -96,3 +97,21 @@ class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
         fields = ("name", "birth_date", "phone_number", "address", "height", "weight",)
+
+
+class PatientSearchForm(forms.ModelForm):
+    CHOICES = [
+        ('mine', 'Мои пациенты'),
+        ('all', 'Все пациенты')
+    ]
+
+    whose_patients = forms.ChoiceField(choices=CHOICES, widget=forms.RadioSelect)
+    archive = forms.BooleanField()
+
+    class Meta:
+        model = Patient
+        fields = ("name", "whose_patients", "archive")
+
+    def __init__(self, *args, **kwargs):
+        self.fields['whose_patients'].initial = self.CHOICES[0]
+        super(PatientSearchForm, self).__init__(*args, **kwargs)
