@@ -1,3 +1,4 @@
+from os import name
 from django.urls import path
 
 from . import views
@@ -27,5 +28,6 @@ urlpatterns = [
     path('wards/<int:ward>/<int:record_id>/', views.record, name='record'),
     path('wards/<int:ward>/', views.records_in_ward, name='records_in_ward'),
     path('messages/', views.get_notifications, name='get_notifications'),
+    path('search/', views.search, name='search_patient'),
     path('', views.wards, name='wards'),
 ]

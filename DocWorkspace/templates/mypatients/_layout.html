@@ -40,6 +40,17 @@
             box-shadow: none !important;
         }
 
+        .container-fluid,
+        form-check {
+            padding-right: 0;
+        }
+
+        #search-box-result {
+            top: 54%;
+            width: 96%;
+        }
+
+
         {% block style %}{% endblock %}
     </style>
 </head>
@@ -83,7 +94,7 @@
             <ul style="width: 60%; position: relative;">
                 {% block search %}
                 <!--Search navbar-->
-                <form class="container-fluid" style="padding-right: 0;">
+                <form class="container-fluid">
                     <div class="input-group">
                         <input type="text" class="form-control" style="padding-top: 0; padding-bottom: 0;">
                         <span class="input-group-text">
@@ -111,7 +122,7 @@
                     </div>
                     {% endblock extra-search-fields %}
                 </form>
-                <div id="search-box-result" class="position-absolute top-0 start-0"></div>
+                <div id="search-box-result" class="container-fluid overflow-auto position-absolute bottom-0"></div>
                 <!--End of search navbar-->
                 {% endblock search %}
             </ul>

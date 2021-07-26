@@ -45,6 +45,21 @@ def get_notifications(request):
 
 
 @login_required
+def search(request, form):
+
+    patients = Patient.objects.filter(name__icontains='')
+    data = dict()
+    data["html_s_results"] = render_to_string(
+        "mypatients/shared_partials/partial_search_results_list.html",
+        {
+            "search_results": patients
+        },
+    )
+    return JsonResponse(data)
+    
+
+
+@login_required
 def wards(request):
     records = ClinicalRecord.objects.filter(doctor=request.user)
     wards = set()

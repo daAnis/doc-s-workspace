@@ -70,6 +70,10 @@ class Patient(models.Model):
     def __str__(self):
         return self.name
 
+    def get_absolute_url(self):
+        latestRecord = ClinicalRecord.objects.filter(patient=self.pk).latest('date_time')
+        return reverse("record", kwargs={"ward": latestRecord.ward, "record_id": latestRecord.pk})
+
 
 class ClinicalRecord(models.Model):
 
