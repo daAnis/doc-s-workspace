@@ -58,7 +58,7 @@
                 success: function (result) {
                     $('#messages-list').html(result.html_notifications);
                     // 10 seconds
-                    timer = setTimeout(getNotifications, 10000);
+                    timer = setTimeout(getNotifications, 60000);
                 }
             });
         };

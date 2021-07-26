@@ -1,3 +1,4 @@
+from django.conf.urls import url
 from django.db import models
 from django.urls import reverse
 
@@ -180,6 +181,19 @@ class ClinicalRecord(models.Model):
     def get_absolute_url(self):
         return reverse("record", kwargs={"ward": self.ward, "record_id": self.pk})
 
+    def save(self, *args, **kwargs):
+        if not ClinicalRecord.objects.filter(pk=self.pk).exists():
+            super().save(*args, **kwargs)
+            context = { 'ward': self.ward, 'record_id': self.pk }
+            n = Notification(
+                value=f'Поступил новый пациент, { self.patient.name }.',
+                url=reverse('record', kwargs=context),
+                doctor=self.doctor
+            )
+            n.save()
+        super().save(*args, **kwargs)
+
+
 class Diary(models.Model):
 
     date_time = models.DateTimeField("Время", default=timezone.now)
@@ -224,6 +238,17 @@ class Temperature(models.Model):
     def __str__(self):
         return self.date_time.strftime("%Y-%m-%d")
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.value > 38.0:
+            context = { 'ward': self.record.ward, 'record_id': self.record.pk }
+            n = Notification(
+                value=f'Высокая температура у пациента: { str(self.value) }! Пациент - { self.record.patient.name }.',
+                url=reverse('observation', kwargs=context),
+                doctor=self.record.doctor
+            )
+            n.save()
+
 
 class Pressure(models.Model):
 
@@ -239,12 +264,31 @@ class Pressure(models.Model):
         verbose_name = "Давление и пульс"
         verbose_name_plural = "Значения давления и пульса"
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.diastole > 139 and self.systole > 59:
+            context = { 'ward': self.record.ward, 'record_id': self.record.pk }
+            n = Notification(
+                value=f'Высокое А/Д у пациента: { str(self.diastole) }/{ str(self.systole) }! Пациент - { self.record.patient.name }.',
+                url=reverse('observation', kwargs=context),
+                doctor=self.record.doctor
+            )
+            n.save()
+        elif self.diastole < 101 and self.systole < 61:
+            context = { 'ward': self.record.ward, 'record_id': self.record.pk }
+            n = Notification(
+                value=f'Низкое А/Д у пациента: { str(self.diastole) }/{ str(self.systole) }! Пациент - { self.record.patient.name }.',
+                url=reverse('observation', kwargs=context),
+                doctor=self.record.doctor
+            )
+            n.save()
+
 
 class Examination(models.Model):
 
     name = models.CharField("Вид обследования", max_length=50)
-    date_1 = models.DateField("Дата назначения", auto_now_add=True)
-    date_2 = models.DateField("Дата исполнения", auto_now=True, blank=True)
+    date_1 = models.DateTimeField("Дата назначения", auto_now_add=True)
+    date_2 = models.DateTimeField("Дата исполнения", auto_now=True, blank=True)
     record = models.ForeignKey(
         ClinicalRecord, verbose_name="История болезни", on_delete=models.CASCADE
     )
@@ -256,6 +300,18 @@ class Examination(models.Model):
 
     def __str__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.date_2 > self.date_1:
+            context = { 'ward': self.record.ward, 'record_id': self.record.pk }
+            n = Notification(
+                value=f'Готов результат обследования: { self.name }.  Пациент - { self.record.patient.name }.',
+                url=reverse('examination', kwargs=context),
+                doctor=self.record.doctor
+            )
+            n.save()
+            
 
 
 class Prescription(models.Model):
